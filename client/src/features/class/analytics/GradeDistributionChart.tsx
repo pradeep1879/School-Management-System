@@ -53,7 +53,7 @@ const GradeDistributionChart = ({ examId }: Props) => {
         <CardTitle>Grade Distribution</CardTitle>
       </CardHeader>
 
-      <CardContent className="h-[320px]">
+      <CardContent className="h-80">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
@@ -63,7 +63,7 @@ const GradeDistributionChart = ({ examId }: Props) => {
               outerRadius={110}
               label
             >
-              {chartData.map((entry, index) => (
+              {chartData.map((_, index) => (
                 <Cell key={index} fill={COLORS[index % COLORS.length]} />
               ))}
             </Pie>
