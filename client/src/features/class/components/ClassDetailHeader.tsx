@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { GraduationCap, Users, BookOpen, Calendar } from "lucide-react";
+import { GraduationCap } from "lucide-react";
 import { useAuthStore } from "@/store/auth.store";
 import MarkAttendanceDialog from "@/features/attendance/components/MarkAttendanceDialog";
 
@@ -29,9 +29,6 @@ const ClassDetailHeader = ({
   className,
   section,
   classTeacher,
-  totalStudents,
-  totalSubjects,
-  attendance,
   academicYear,
 }: ClassDetailHeaderProps) => {
   const role = useAuthStore((state) => state.role);
