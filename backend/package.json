@@ -1,19 +1,20 @@
 {
-  "name": "prisma",
+  "name": "school-management-backend",
   "version": "1.0.0",
-  "main": "index.js",
+  "description": "Backend API for School Management System",
   "type": "module",
+  "main": "index.js",
   "scripts": {
-  "start": "node index.js",
-  "dev": "nodemon index.js",
-  "postinstall": "prisma generate",
-  "prisma:generate": "prisma generate",
-  "prisma:migrate": "prisma migrate deploy"
-},
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "postinstall": "prisma generate --schema=./prisma/schema.prisma",
+    "prisma:generate": "prisma generate --schema=./prisma/schema.prisma",
+    "prisma:migrate": "prisma migrate deploy",
+    "prisma:studio": "prisma studio"
+  },
+  "prisma": {
+    "schema": "./prisma/schema.prisma"
+  },
   "dependencies": {
     "@prisma/client": "^6.18.0",
     "bcrypt": "^6.0.0",
@@ -23,9 +24,10 @@
     "express-fileupload": "^1.5.2",
     "imagekit": "^6.0.0",
     "jsonwebtoken": "^9.0.2",
-    "node-cron": "^4.2.1",
+    "node-cron": "^4.2.1"
+  },
+  "devDependencies": {
     "nodemon": "^3.1.11",
     "prisma": "^6.18.0"
-
   }
 }
