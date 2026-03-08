@@ -10,7 +10,7 @@ import ActivitiesSection from "@/features/activity/pages/ClassActivityPage";
 import SubjectsSection from "@/features/subject/components/SubjectsSection";
 import ExamPage from "@/features/exam/pages/ExamPage";
 import ClassAttendanceOverview from "@/features/attendance/components/ClassAttendanceOverview";
-import ClassAnalyticsSection from "./ClassAnalyticsSection";
+
 import ExamAnalyticsDashboard from "@/features/exam/analytics/ExamAnalyticsDashboard";
 
 const tabs = [
