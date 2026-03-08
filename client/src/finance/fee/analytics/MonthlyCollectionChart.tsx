@@ -28,7 +28,7 @@ export default function MonthlyCollectionChart({ payments }: Props) {
           <CardTitle>Monthly Collection</CardTitle>
         </CardHeader>
 
-        <CardContent className="h-[300px] flex items-center justify-center text-muted-foreground">
+        <CardContent className="h-75 flex items-center justify-center text-muted-foreground">
           No payment data available
         </CardContent>
       </Card>
@@ -48,14 +48,14 @@ export default function MonthlyCollectionChart({ payments }: Props) {
   }))
 
   return (
-    <Card className="shadow-sm border">
+    <Card className="shadow-sm w-88 sm:w-full border">
       <CardHeader>
         <CardTitle className="text-base font-semibold">
           Monthly Collection Trend
         </CardTitle>
       </CardHeader>
 
-      <CardContent className="h-[320px]">
+      <CardContent className="h-80">
 
         <ResponsiveContainer width="100%" height="100%">
 

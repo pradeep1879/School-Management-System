@@ -71,6 +71,7 @@ export default function ActivitiesSection({ classId, canEdit }: Props) {
               <AddActivityDialog classId={classId} setOpen={setOpen} />
             </Dialog>
           )}
+          
         </div>
       </div>
 

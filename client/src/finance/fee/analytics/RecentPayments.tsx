@@ -44,7 +44,7 @@ export default function RecentPayments({ data }: Props){
  }
 
  return(
-  <Card className="shadow-sm">
+  <Card className="shadow-sm w-88 sm:w-full">
 
     <CardHeader>
       <CardTitle>Recent Payments</CardTitle>
@@ -54,8 +54,8 @@ export default function RecentPayments({ data }: Props){
 
       <Table>
 
-        <TableHeader>
-          <TableRow>
+        <TableHeader >
+          <TableRow >
             <TableHead>Student</TableHead>
             <TableHead>Method</TableHead>
             <TableHead>Date</TableHead>

@@ -55,7 +55,7 @@ export default function PaymentMethodChart({ payments }: Props) {
   }))
 
   return (
-    <Card className="shadow-sm border">
+    <Card className="shadow-sm w-88 sm:w-full border">
 
       <CardHeader>
         <CardTitle className="text-base font-semibold">

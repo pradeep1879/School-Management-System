@@ -15,6 +15,7 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 
+
 const COLORS = [
   "#22c55e", // A
   "#3b82f6", // B
@@ -27,6 +28,8 @@ const COLORS = [
 const CustomTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
     const item = payload[0];
+
+   
 
     return (
       <div className="bg-white border shadow-md rounded-lg px-3 py-2 text-sm">
@@ -63,7 +66,7 @@ const GradeDistributionChart = ({ data }: any) => {
         </CardDescription>
       </CardHeader>
 
-      <CardContent className="h-809 relative">
+      <CardContent className="h-80 relative">
         <ResponsiveContainer>
           <PieChart>
             <Pie

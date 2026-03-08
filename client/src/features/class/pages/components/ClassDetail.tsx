@@ -16,10 +16,10 @@ import ExamAnalyticsDashboard from "@/features/exam/analytics/ExamAnalyticsDashb
 const tabs = [
   { id: "analytics", label: "Analytics" },
   { id: "students", label: "Students" },
+  { id: "exams", label: "Exams" },
+  { id: "attendance", label: "Attendance" },
   { id: "subjects", label: "Subjects" },
   { id: "activities", label: "Activities" },
-  { id: "attendance", label: "Attendance" },
-  { id: "exams", label: "Exams" },
 ];
 
 const ClassDetail = () => {
@@ -84,12 +84,13 @@ const ClassDetail = () => {
 
         {role === "admin" && (
         <div className="mt-8">
-          <div className="flex  gap-2 sm:gap-8 md:gap-5 lg:gap-10 border-b">
+          <div className="flex  gap-8  lg:gap-10 border-b 
+           overflow-x-auto whitespace-nowrap [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`pb-3 text-xs sm:text-sm md:text-md lg:text-lg font-medium relative ${
+                className={`pb-3 text-md sm:text-sm md:text-md lg:text-lg font-medium relative ${
                   activeTab === tab.id
                     ? "text-primary"
                     : "text-muted-foreground"

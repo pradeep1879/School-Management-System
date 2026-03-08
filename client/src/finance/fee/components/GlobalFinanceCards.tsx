@@ -23,8 +23,8 @@ const GlobalFinanceCards = ({
         <CardContent className="p-4 flex items-center gap-4">
           <Wallet className="text-blue-500" />
           <div>
-            <p className="text-sm text-muted-foreground">Total Revenue</p>
-            <p className="text-xl font-semibold">
+            <p className="text-xs md:text-sm text-muted-foreground">Total Revenue</p>
+            <p className="text-md md:text-xl font-semibold">
               <CountUp
               end={totalRevenue || 0 }
               duration={1.5}
@@ -40,8 +40,8 @@ const GlobalFinanceCards = ({
         <CardContent className="p-4 flex items-center gap-4">
           <TrendingUp className="text-green-500" />
           <div>
-            <p className="text-sm text-muted-foreground">Collected</p>
-            <p className="text-xl font-semibold text-green-600">
+            <p className="text-xs md:text-sm text-muted-foreground">Collected</p>
+            <p className="text-md md:text-xl font-semibold text-green-600">
             <CountUp
               end={totalCollected || 0 }
               duration={1.5}
@@ -57,8 +57,8 @@ const GlobalFinanceCards = ({
         <CardContent className="p-4 flex items-center gap-4">
           <AlertTriangle className="text-red-500" />
           <div>
-            <p className="text-sm text-muted-foreground">Total Due</p>
-            <p className="text-xl font-semibold text-red-600">
+            <p className="text-xs md:text-sm text-muted-foreground">Total Due</p>
+            <p className="text-md md:text-xl font-semibold text-red-600">
               <CountUp
                 end={totalDue || 0 }
                 duration={1.5}
@@ -74,8 +74,8 @@ const GlobalFinanceCards = ({
         <CardContent className="p-4 flex items-center gap-4">
           <CheckCircle2 className="text-purple-500" />
           <div>
-            <p className="text-sm text-muted-foreground">Today</p>
-            <p className="text-xl font-semibold">
+            <p className="text-xs md:text-sm text-muted-foreground">Today</p>
+            <p className="text-md md:text-xl font-semibold">
               <CountUp
                 end={todayCollection || 0 }
                 duration={1.5}

@@ -49,20 +49,20 @@ const OverviewCards = ({ overview }: any) => {
             key={index}
             className={`border-l-4 ${card.color} shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1`}
           >
-            <CardContent className="p-4 flex items-center justify-between">
+            <CardContent className="p-2 px-3 md:p-4 flex items-center justify-between">
 
               <div>
-                <p className="text-sm text-muted-foreground">
+                <p className="md:text-sm text-xs text-muted-foreground">
                   {card.title}
                 </p>
 
-                <p className="text-2xl font-bold mt-1">
+                <p className="text-lg md:text-2xl  font-bold mt-1">
                   {card.value}
                 </p>
               </div>
 
               <div
-                className={`p-3 rounded-xl ${card.iconBg}`}
+                className={`p-2 md:p-3 rounded-xl ${card.iconBg}`}
               >
                 <Icon size={20} />
               </div>

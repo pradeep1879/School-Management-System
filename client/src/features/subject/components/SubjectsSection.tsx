@@ -58,37 +58,42 @@ export default function SubjectsSection({ classId, canEdit }: Props) {
   return (
     <div className="space-y-6">
       {/* HEADER */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h2 className="text-2xl font-semibold">Subjects</h2>
           <p className="text-sm text-muted-foreground">
             Subjects assigned to this class
           </p>
         </div>
-
-        {canEdit && (
-          <Dialog open={subjectDialogOpen} onOpenChange={setSubjectDialogOpen}>
-            <Button onClick={() => setSubjectDialogOpen(true)}>
-              <Plus size={16} /> Add Subject
-            </Button>
-            <AddSubjectDialog
-              classId={classId}
-              setOpen={setSubjectDialogOpen}
+        <div className="flex items-center gap-3 w-full sm:w-auto">
+          <div className="relative w-full sm:w-64">
+            <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search subject..."
+              className="pl-9"
             />
-          </Dialog>
-        )}
+          </div>
+
+          {canEdit && (
+            <Dialog
+              open={subjectDialogOpen}
+              onOpenChange={setSubjectDialogOpen}
+            >
+              <Button onClick={() => setSubjectDialogOpen(true)}>
+                <Plus size={16} /> Add Subject
+              </Button>
+              <AddSubjectDialog
+                classId={classId}
+                setOpen={setSubjectDialogOpen}
+              />
+            </Dialog>
+          )}
+        </div>
       </div>
 
       {/* SEARCH */}
-      <div className="relative w-64">
-        <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-        <Input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search subject..."
-          className="pl-9"
-        />
-      </div>
 
       {isLoading && subjects.length === 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">

@@ -103,11 +103,11 @@ export default function StudentResultPage() {
   if (!data) return <div className="p-6">No result found</div>;
 
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-6">
+    <div className="md:max-w-4xl mx-auto p-1 md:p-6 space-y-6">
       {/* ================= SCHOOL HEADER ================= */}
       <Card>
         <CardContent className="p-6 text-center space-y-2">
-          <h1 className="text-3xl font-bold bg-linear-to-r from-indigo-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
+          <h1 className="text-2xl sm:text-3xl font-bold bg-linear-to-r from-indigo-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
             Academic Report Card{" "}
             <span className="text-gray-700 font-semibold">
               ({data?.examTitle})

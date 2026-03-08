@@ -5,10 +5,12 @@ import {
   YAxis,
   Tooltip,
   ResponsiveContainer,
-  Legend
+  Legend,
+  CartesianGrid
 } from "recharts"
 
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
+import useIsMobile from "@/screen.detector"
 
 type ClassData = {
   className: string
@@ -22,6 +24,9 @@ interface Props {
 }
 
 export default function ClassCollectionChart({ data }: Props) {
+  const isMobile = useIsMobile()
+
+  const barWidth = isMobile ? 8 : 28
 
   if (!data || data.length === 0) {
     return (
@@ -30,7 +35,7 @@ export default function ClassCollectionChart({ data }: Props) {
           <CardTitle>Class Collection</CardTitle>
         </CardHeader>
 
-        <CardContent className="h-[300px] flex items-center justify-center text-muted-foreground">
+        <CardContent className="h-56 sm:h-72 flex items-center justify-center text-muted-foreground">
           No class data available
         </CardContent>
       </Card>
@@ -38,45 +43,67 @@ export default function ClassCollectionChart({ data }: Props) {
   }
 
   return (
-    <Card className="shadow-sm border">
+    <Card className="shadow-sm w-88 sm:w-full border bg-slate-900">
       <CardHeader>
-        <CardTitle className="text-base font-semibold">
+        <CardTitle className="text-sm sm:text-base font-semibold text-white">
           Class Wise Collection
         </CardTitle>
       </CardHeader>
 
-      <CardContent className="h-[320px]">
+      <CardContent className="h-70 sm:h-80">
 
-        <ResponsiveContainer width="100%" height="100%">
+        <ResponsiveContainer width="108%" height="100%">
 
           <BarChart
             data={data}
-            barSize={30}
-            barGap={6}
+            barSize={barWidth}
+            barGap={8}
+            barCategoryGap="25%"
           >
+
+            {/* Gradients */}
+            <defs>
+              <linearGradient id="paidGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#22c55e" stopOpacity={1}/>
+                <stop offset="100%" stopColor="#16a34a" stopOpacity={0.8}/>
+              </linearGradient>
+
+                <linearGradient id="dueGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#ef4444" stopOpacity={1}/>
+                  <stop offset="100%" stopColor="#dc2626" stopOpacity={0.8}/>
+                </linearGradient>
+            </defs>
+
+            {/* Grid */}
+            <CartesianGrid
+              strokeDasharray="3 3"
+              stroke="#1f2937"
+              vertical={false}
+            />
 
             {/* X Axis */}
             <XAxis
               dataKey="className"
               axisLine={false}
               tickLine={false}
-              tick={{ fontSize: 12 }}
+              tick={{ fill: "#9ca3af", fontSize: 12 }}
             />
 
             {/* Y Axis */}
             <YAxis
               axisLine={false}
               tickLine={false}
-              tick={{ fontSize: 12 }}
+              tick={{ fill: "#9ca3af", fontSize: 12 }}
             />
 
             {/* Tooltip */}
             <Tooltip
-              cursor={{ fill: "rgba(0,0,0,0.03)" }}
+              cursor={{ fill: "rgba(255,255,255,0.03)" }}
               contentStyle={{
+                backgroundColor: "#020617",
+                border: "1px solid #1f2937",
                 borderRadius: "10px",
-                border: "1px solid #e5e7eb",
-                fontSize: "13px"
+                color: "#fff"
               }}
             />
 
@@ -84,24 +111,27 @@ export default function ClassCollectionChart({ data }: Props) {
             <Legend
               wrapperStyle={{
                 fontSize: "13px",
-                paddingTop: "10px"
+                paddingTop: "10px",
+                color: "#d1d5db"
               }}
             />
 
-            {/* Paid */}
+            {/* Paid Bar */}
             <Bar
               dataKey="paid"
               name="Paid"
-              fill="#22c55e"
-              radius={[8,8,0,0]}
+              fill="url(#paidGradient)"
+              radius={[8, 8, 0, 0]}
+              animationDuration={1200}
             />
 
-            {/* Due */}
+            {/* Due Bar */}
             <Bar
               dataKey="due"
               name="Due"
-              fill="#ef4444"
-              radius={[8,8,0,0]}
+              fill="url(#dueGradient)"
+              radius={[8, 8, 0, 0]}
+              animationDuration={1200}
             />
 
           </BarChart>
