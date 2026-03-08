@@ -10,7 +10,7 @@ import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { useHomework } from "../hooks/useHomeWork";
 import CreateHomeworkDialog from "../forms/CreateHomeWorkDialog";
 import HomeworkCard from "../components/HomeWorkCard";
-import { Skeleton } from "@/components/ui/skeleton";
+
 import HomeworkSkeletonGrid from "@/skeletons/wraper/HomeworkSkeletonGrid";
 
 export default function HomeworkPage() {

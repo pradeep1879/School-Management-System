@@ -9,7 +9,7 @@ interface Props {
   canEdit: boolean;
 }
 
-export default function ExamsSection({ classId, canEdit }: Props) {
+export default function ExamsSection({ classId }: Props) {
   const { data, isLoading } = useExams(classId);
   const navigate = useNavigate();
   const role = useAuthStore((s) => s.role);

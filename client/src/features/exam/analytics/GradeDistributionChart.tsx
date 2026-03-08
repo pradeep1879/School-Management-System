@@ -63,7 +63,7 @@ const GradeDistributionChart = ({ data }: any) => {
         </CardDescription>
       </CardHeader>
 
-      <CardContent className="h-[320px] relative">
+      <CardContent className="h-809 relative">
         <ResponsiveContainer>
           <PieChart>
             <Pie

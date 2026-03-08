@@ -6,7 +6,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Loader2, Calendar, MapPin } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useCreateActivity } from "../hooks/useActivity";
 import { Field, FieldLabel } from "@/components/ui/field";
 import {

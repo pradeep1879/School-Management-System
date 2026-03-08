@@ -2,11 +2,12 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTeacherClass } from "@/features/class/hooks/useTeacherClass";
 import StudentsTable from "@/features/student/components/table/StudentTable";
-import { useAuthStore } from "@/store/auth.store";
+
+
 
 export default function TeacherStudentsPage() {
   const { data, isLoading } = useTeacherClass(true);
-  const { role } = useAuthStore();
+
   console.log("teacher STudent Page", data)
 
   const classId = data?.classDetail?.id;

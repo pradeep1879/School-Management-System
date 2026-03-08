@@ -46,7 +46,6 @@ export default function AddExamDialog({
     handleSubmit,
     reset,
     setValue,
-    formState: { errors },
   } = useForm<FormValues>({
     defaultValues: {
       subjects: [
@@ -134,7 +133,7 @@ export default function AddExamDialog({
         <div className="space-y-4">
           <h4 className="font-medium text-sm">Subjects</h4>
 
-          {fields.map((field, index) => (
+          {fields.map((field:any, index:any) => (
             <div
               key={field.id}
               className="border rounded-lg p-4 space-y-3 bg-muted/20"

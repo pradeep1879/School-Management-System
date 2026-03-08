@@ -36,7 +36,7 @@ export default function PaymentMethodChart({ payments }: Props) {
           <CardTitle>Payment Methods</CardTitle>
         </CardHeader>
 
-        <CardContent className="h-[300px] flex items-center justify-center text-muted-foreground">
+        <CardContent className="h-75 flex items-center justify-center text-muted-foreground">
           No payment data available
         </CardContent>
       </Card>
@@ -63,7 +63,7 @@ export default function PaymentMethodChart({ payments }: Props) {
         </CardTitle>
       </CardHeader>
 
-      <CardContent className="h-[320px]">
+      <CardContent className="h-80">
 
         <ResponsiveContainer width="100%" height="100%">
 
@@ -79,7 +79,7 @@ export default function PaymentMethodChart({ payments }: Props) {
               stroke="none"
             >
 
-              {data.map((entry, index) => (
+              {data.map((_, index) => (
                 <Cell
                   key={index}
                   fill={COLORS[index % COLORS.length]}

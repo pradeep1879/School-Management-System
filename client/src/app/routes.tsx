@@ -1,5 +1,5 @@
 import AdminLogin from '@/features/admin/pages/auth/AdminLogin'
-import AdminSignup from '@/features/admin/pages/auth/AdminSignup';
+
 import SchoolCalendar from '@/features/admin/pages/Calendar';
 
 import Classes from '@/features/admin/pages/Classes';
@@ -37,11 +37,11 @@ import TeacherActivityPage from '@/features/teacher/pages/TeacherActivityPage';
 import StudentActivityPage from '@/features/student/pages/StudentActivityPage';
 import TeacherSubjectsPage from '@/features/teacher/pages/TeacherSubjectsPage';
 import StudentSubjectsPage from '@/features/student/pages/StudentSubjectsPage';
-import TeacherResultsPage from '@/features/exam/pages/result/TeacherStudentResultPage';
+
 import StudentExamListPage from '@/features/student/pages/StudentExamListPage';
 import HomeworkPage from '@/features/homeWork/pages/HomeworkPage';
 import SyllabusPage from '@/features/subject/pages/SyllabusPage';
-import AdminResultsPage from '@/features/exam/pages/result/AdminStudentResultsPage';
+
 import TeacherStudentResultsPage from '@/features/exam/pages/result/TeacherStudentResultPage';
 import AdminStudentResultsPage from '@/features/exam/pages/result/AdminStudentResultsPage';
 import TeacherAttendancePage from '@/features/teacher/pages/TeacherAttendancePage';
@@ -54,12 +54,13 @@ import StudentProfileSettings from '@/features/student/pages/StudentProfileSetti
 import TeacherStudentsPage from '@/features/teacher/pages/TeacherStudentPage';
 import StudentProfilePageAdminTeacher from '@/features/student/pages/StudentProfileForAdmin&Teacher';
 import MyFeePage from '@/finance/fee/pages/StudentFeePage';
-import AdminTeacherAttendancePage from '@/features/teacherAttendance/pages/AdminTeacherAttendancePage';
-import TeacherAttendanceStatsPage from '@/features/teacherAttendance/pages/TeacherAttendanceStatsPageFT';
+
+
 import TeacherAttendanceStatsPageFT from '@/features/teacherAttendance/pages/TeacherAttendanceStatsPageFT';
 import MyAttendanceTable from '@/features/teacherAttendance/components/myAttendanceTable';
 import AdminSalaryPage from '@/finance/salary/pages/AdminSalaryPage';
-import PublicRoute from './publicRoutes';
+import PublicRoute from './PublicRoutes';
+
 
 // import ClassActivitiesSection from '@/features/class/components/ClassActivities';
 

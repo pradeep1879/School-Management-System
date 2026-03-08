@@ -22,7 +22,6 @@ const AdminFeeDashboard = () => {
   const { data, isLoading } = useAdminFinanceSummary();
 
   const {
-    data: dashboard,
     isLoading: chartsLoading,
   } = useFinanceDashboard();
 

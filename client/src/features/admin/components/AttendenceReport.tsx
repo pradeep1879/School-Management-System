@@ -1,4 +1,4 @@
-import * as React from "react"
+
 import { Label, Pie, PieChart } from "recharts"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
@@ -35,9 +35,7 @@ const chartConfig = {
 } satisfies ChartConfig
 
 export default function AttendenceReportChart() {
-    const totalVisitors = React.useMemo(() => {
-        return chartData.reduce((acc, curr) => acc + curr.visitors, 0)
-    }, [])
+   
 
     const CustomerSegmentation = [
         {
@@ -79,7 +77,7 @@ export default function AttendenceReportChart() {
             <CardContent className="flex flex-col justify-between gap-2 flex-1">
                 <ChartContainer
                     config={chartConfig}
-                    className="aspect-square max-h-[250px]"
+                    className="aspect-square max-h-62.5"
                 >
                     <PieChart>
                         <ChartTooltip

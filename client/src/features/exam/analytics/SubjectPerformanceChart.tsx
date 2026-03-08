@@ -53,7 +53,7 @@ const SubjectPerformanceChart = ({ data }: any) => {
         </CardDescription>
       </CardHeader>
 
-      <CardContent className="h-[320px]">
+      <CardContent className="h-80">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={data}
@@ -85,7 +85,7 @@ const SubjectPerformanceChart = ({ data }: any) => {
               radius={[8, 8, 0, 0]}
               barSize={40}
             >
-              {data?.map((entry: any, index: number) => (
+              {data?.map((_: any, index: number) => (
                 <Cell
                   key={`cell-${index}`}
                   fill={COLORS[index % COLORS.length]}

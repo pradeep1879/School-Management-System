@@ -22,7 +22,7 @@ const initialEvents: any = {
 
 export default function SchoolCalendar() {
   const [currentMonth, setCurrentMonth] = useState(new Date())
-  const [events, setEvents] = useState(initialEvents)
+  const [events, ] = useState(initialEvents)
 
   const { user } = useAuth();
   const isAdmin = user.role === "admin"
@@ -122,7 +122,7 @@ export default function SchoolCalendar() {
               return (
                 <div
                   key={day}
-                  className="border rounded-xl p-2 min-h-[90px] hover:bg-muted/40 transition cursor-pointer"
+                  className="border rounded-xl p-2 min-h-22.5 hover:bg-muted/40 transition cursor-pointer"
                 >
                   <div className="text-sm font-medium mb-1">
                     {day}

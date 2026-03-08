@@ -13,7 +13,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
 
 export default function HomeworkTab() {
-  const [homeworks, setHomeworks] = useState([
+  const [homeworks] = useState([
     {
       id: 1,
       subject: "Mathematics",

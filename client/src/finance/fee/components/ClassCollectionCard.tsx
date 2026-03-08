@@ -9,9 +9,6 @@ interface Props {
   todayCollection?: number;
 }
 
-const formatCurrency = (amount?: number) =>
-  `₹${(amount || 0).toLocaleString()}`;
-
 const ClassCollectionCard = ({
   totalAmount,
   totalPaid,
