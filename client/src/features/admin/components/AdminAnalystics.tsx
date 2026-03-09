@@ -1,55 +1,48 @@
-import { GraduationCap, School,  Users} from "lucide-react";
-import { Card,  CardHeader, CardTitle } from "@/components/ui/card";
-import AttendenceReportChart  from "./AttendenceReport";
+import { GraduationCap, School, Users } from "lucide-react";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import AttendenceReportChart from "./AttendenceReport";
 import DashboardTopCard from "./DashboardCard";
 import { useDashboardAnalytics } from "../hooks/useAdminDashboard";
 import DailyAttendanceChart from "./dashboardAnalytics/AttendaceBarGraph";
 
-
-
 const AdminAnalystics = () => {
-  const { data} = useDashboardAnalytics();
+  const { data } = useDashboardAnalytics();
   console.log("adminanalytics", data);
-    
 
-  const presentTeachers =
-    (data?.totalTeachers || 0) - (data?.absentTeachers || 0)
-
-  const presentStudents =
-    (data?.totalStudents || 0) - (data?.absentStudents || 0)
+  const presentStudents = data?.todayAttendance?.students?.PRESENT || 0;
+  const presentTeachers = data?.todayAttendance?.teachers?.PRESENT || 0;
 
   return (
     <div className="grid gap-6">
-     <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+        <DashboardTopCard
+          title="Total Classes"
+          value={data?.overview?.totalClasses}
+          icon={School}
+          color="border-blue-500 text-blue-500"
+        />
 
-      <DashboardTopCard
-        title="Total Classes"
-        value={data?.totalClasses}
-        icon={School}
-        color="border-blue-500 text-blue-500"
-      />
+        <DashboardTopCard
+          title="Teachers"
+          value={data?.overview?.totalTeachers}
+          icon={Users}
+          color="border-green-500 text-green-500"
+          present={presentTeachers}
+          absent={data?.todayAttendance?.teachers?.ABSENT}
+          leave={data?.todayAttendance?.teachers?.LEAVE}
+        />
 
-      <DashboardTopCard
-        title="Teachers"
-        value={data?.totalTeachers}
-        icon={Users}
-        color="border-green-500 text-green-500"
-        present={presentTeachers}
-        absent={data?.absentTeachers}
-      />
-
-      <DashboardTopCard
-        title="Students"
-        value={data?.totalStudents}
-        icon={GraduationCap}
-        color="border-purple-300 text-purple-500"
-        present={presentStudents}
-        absent={data?.absentStudents}
-        leave={data?.leaveStudents}
-        holiday={data?.holidayStudents}
-      />
-
-    </div>
+        <DashboardTopCard
+          title="Students"
+          value={data?.overview?.totalStudents}
+          icon={GraduationCap}
+          color="border-purple-300 text-purple-500"
+          present={presentStudents}
+          absent={data?.todayAttendance?.students?.ABSENT}
+          leave={data?.todayAttendance?.students?.LEAVE}
+          holiday={data?.todayAttendance?.students?.HOLIDAY}
+        />
+      </div>
 
       {/*  GRAPH SECTION  */}
 
@@ -94,7 +87,7 @@ const AdminAnalystics = () => {
         </CardContent> */}
       </Card>
     </div>
-  )
-}
+  );
+};
 
-export default AdminAnalystics
+export default AdminAnalystics;

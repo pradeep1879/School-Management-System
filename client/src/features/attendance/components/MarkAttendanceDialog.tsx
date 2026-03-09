@@ -46,6 +46,8 @@ export default function MarkAttendanceDialog({
   const [exceptions, setExceptions] = useState<Record<string, StatusType>>({});
   const [search, setSearch] = useState("");
 
+
+
   // Mutations
   const createMutation = useMarkAttendance();
   const updateMutation = useUpdateAttendanceSession();
@@ -181,6 +183,7 @@ const summary = useMemo(() => {
       status,
     })
   );
+ 
 
   // force IST-safe date
   const safeDate = new Date(selectedDate);
@@ -199,6 +202,8 @@ const summary = useMemo(() => {
         },
       }
     );
+     console.log("Submitting attendance for class:", classId)
+  console.log("Students:", students.length)
   } else {
     createMutation.mutate(
       {

@@ -289,6 +289,8 @@ model Attendance {
   student    Student           @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
   @@unique([sessionId, studentId])
+  @@index([status])
+  @@index([studentId])
 }
 
 model Fee {
@@ -470,13 +472,13 @@ model TeacherAttendance {
   teacherId        String
   teacher          Teacher                  @relation(fields: [teacherId], references: [id], onDelete: Cascade)
 
-  date             DateTime
+  date             DateTime                 @db.Date
 
   status           TeacherAttendanceStatus
   note             String?
 
-  checkInTime      DateTime?
-  checkOutTime     DateTime?
+  checkInTime      DateTime?                @db.Date
+  checkOutTime     DateTime?                @db.Date
 
   approvalStatus   AttendanceApprovalStatus @default(PENDING)
 

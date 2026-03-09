@@ -14,6 +14,7 @@ router.post("/signup", adminController.signup);
 // Admin login
 router.post("/login", adminController.login);
 
+router.post("/logout", adminController.logout);
 
 
 // Protected Routes
@@ -24,6 +25,5 @@ router.get("/dashboard", verifyUser(["admin"]), adminController.dashboard);
 // Admin profile (optional but recommended)
 router.get("/profile", verifyUser(["admin"]), adminController.getProfile);
 
-router.post("/logout", verifyUser(["admin"]), adminController.logout);
 
 export default router;

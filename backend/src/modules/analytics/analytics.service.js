@@ -111,118 +111,336 @@ import { client } from "../../prisma/db.js";
 // };
 
 
-export const getDashboardAnalytics = async () => {
-  const today = new Date();
+// export const getDashboardAnalytics = async () => {
+//   const today = new Date();
 
-  const startOfDay = new Date(today);
-  startOfDay.setHours(0, 0, 0, 0);
+//   const startOfDay = new Date(today);
+//   startOfDay.setHours(0, 0, 0, 0);
 
-  const endOfDay = new Date(today);
-  endOfDay.setHours(23, 59, 59, 999);
+//   const endOfDay = new Date(today);
+//   endOfDay.setHours(23, 59, 59, 999);
+
+//   const [
+//     totalClasses,
+//     totalTeachers,
+//     totalStudents,
+//     teacherAttendance,
+//     sessions
+//   ] = await Promise.all([
+//     client.class.count(),
+//     client.teacher.count(),
+//     client.student.count(),
+
+//     client.teacherAttendance.findMany({
+//       where: {
+//         date: {
+//           gte: startOfDay,
+//           lte: endOfDay,
+//         },
+//         approvalStatus: "APPROVED",
+//       },
+//       select: { status: true },
+//     }),
+
+//     client.attendanceSession.findMany({
+//       where: {
+//         date: {
+//           gte: startOfDay,
+//           lte: endOfDay,
+//         },
+//       },
+//       select: {
+//         records: {
+//           select: {
+//             studentId: true,
+//             status: true,
+//           },
+//         },
+//       },
+//     }),
+//   ]);
+
+//   /* ---------- STUDENT STATS ---------- */
+
+//   const studentStats = {
+//     PRESENT: 0,
+//     ABSENT: 0,
+//     LEAVE: 0,
+//     HOLIDAY: 0,
+//   };
+
+//   const countedStudents = new Set();
+
+//   for (const session of sessions) {
+//     for (const record of session.records) {
+
+//       if (countedStudents.has(record.studentId)) continue;
+
+//       countedStudents.add(record.studentId);
+//       studentStats[record.status]++;
+//     }
+//   }
+
+//   /* ---------- TEACHER STATS ---------- */
+
+//   const teacherStats = {
+//     PRESENT: 0,
+//     ABSENT: 0,
+//     LEAVE: 0,
+//     HALF_DAY: 0,
+//     HOLIDAY: 0,
+//   };
+
+//   teacherAttendance.forEach((t) => {
+//     teacherStats[t.status]++;
+//   });
+
+//   /* ---------- PERCENTAGES ---------- */
+
+//   const studentAttendancePercent =
+//     totalStudents > 0
+//       ? Math.round((studentStats.PRESENT / totalStudents) * 100)
+//       : 0;
+
+//   const teacherAttendancePercent =
+//     totalTeachers > 0
+//       ? Math.round((teacherStats.PRESENT / totalTeachers) * 100)
+//       : 0;
+
+//   return {
+//     totalClasses,
+//     totalTeachers,
+//     totalStudents,
+
+//     presentStudents: studentStats.PRESENT,
+//     absentStudents: studentStats.ABSENT,
+//     leaveStudents: studentStats.LEAVE,
+//     holidayStudents: studentStats.HOLIDAY,
+
+//     presentTeachers: teacherStats.PRESENT,
+//     absentTeachers: teacherStats.ABSENT,
+//     leaveTeachers: teacherStats.LEAVE,
+//     halfDayTeachers: teacherStats.HALF_DAY,
+
+//     studentAttendancePercent,
+//     teacherAttendancePercent,
+//   };
+// };
+
+
+
+
+export const getAdminDashboard = async () => {
+
+  const today = new Date()
+
+  const startOfDay = new Date(today)
+  startOfDay.setHours(0,0,0,0)
+
+  const endOfDay = new Date(today)
+  endOfDay.setHours(23,59,59,999)
+
+  const startOfWeek = new Date(today)
+  startOfWeek.setDate(today.getDate() - 6)
+  startOfWeek.setHours(0,0,0,0)
 
   const [
     totalClasses,
-    totalTeachers,
     totalStudents,
-    teacherAttendance,
-    studentAttendance,
-  ] = await Promise.all([
-    client.class.count(),
+    totalTeachers,
 
-    client.teacher.count(),
+    classesWithAttendance,
+
+    studentToday,
+    teacherToday,
+
+    weeklyStudents,
+    weeklyTeachers
+
+  ] = await Promise.all([
+
+    client.class.count(),
 
     client.student.count(),
 
-    // Teacher attendance grouped
-    client.teacherAttendance.groupBy({
-      by: ["status"],
-      where: {
-        date: {
-          gte: startOfDay,
-          lte: endOfDay,
-        },
-        approvalStatus: "APPROVED",
+    client.teacher.count(),
+
+    /* Classes that marked attendance today */
+
+    client.attendanceSession.findMany({
+      where:{
+        date:{
+          gte:startOfDay,
+          lte:endOfDay
+        }
       },
-      _count: {
-        status: true,
-      },
+      select:{
+        classId:true
+      }
     }),
 
-    // Student attendance grouped
-    client.attendance.groupBy({
-      by: ["status"],
-      where: {
-        session: {
-          date: {
-            gte: startOfDay,
-            lte: endOfDay,
-          },
-        },
+    /* Student attendance today */
+
+    client.attendance.findMany({
+      where:{
+        session:{
+          date:{
+            gte:startOfDay,
+            lte:endOfDay
+          }
+        }
       },
-      _count: {
-        status: true,
-      },
+      select:{
+        studentId:true,
+        status:true
+      }
     }),
-  ]);
 
-  // Convert grouped results to object
-  const teacherStats = {
-    PRESENT: 0,
-    ABSENT: 0,
-  };
+    /* Teacher attendance today */
 
-  teacherAttendance.forEach((t) => {
-    teacherStats[t.status] = t._count.status;
-  });
+    client.teacherAttendance.findMany({
+      where:{
+        approvalStatus:"APPROVED",
+        date:{
+          gte:startOfDay,
+          lte:endOfDay
+        }
+      },
+      select:{
+        status:true
+      }
+    }),
+
+    /* Weekly student chart */
+
+    client.$queryRaw`
+      SELECT DATE(s.date) as date,
+             COUNT(a.id)::int as present
+      FROM "Attendance" a
+      JOIN "AttendanceSession" s
+      ON a."sessionId" = s.id
+      WHERE a.status = 'PRESENT'
+      AND s.date BETWEEN ${startOfWeek} AND ${endOfDay}
+      GROUP BY DATE(s.date)
+      ORDER BY DATE(s.date)
+    `,
+
+    /* Weekly teacher chart */
+
+    client.$queryRaw`
+      SELECT DATE(date) as date,
+             COUNT(id)::int as present
+      FROM "TeacherAttendance"
+      WHERE status='PRESENT'
+      AND "approvalStatus"='APPROVED'
+      AND date BETWEEN ${startOfWeek} AND ${endOfDay}
+      GROUP BY DATE(date)
+      ORDER BY DATE(date)
+    `
+  ])
+
+  /* ---------- STUDENT STATS ---------- */
 
   const studentStats = {
-    PRESENT: 0,
-    ABSENT: 0,
-    LEAVE: 0,
-    HOLIDAY: 0,
-  };
+    PRESENT:0,
+    ABSENT:0,
+    LEAVE:0,
+    HOLIDAY:0
+  }
 
-  studentAttendance.forEach((s) => {
-    studentStats[s.status] = s._count.status;
-  });
+  for(const record of studentToday){
 
-  const studentTotal =
-    studentStats.PRESENT +
-    studentStats.ABSENT +
-    studentStats.LEAVE +
-    studentStats.HOLIDAY;
+    if(studentStats[record.status] !== undefined){
+      studentStats[record.status]++
+    }
 
-  const teacherTotal =
-    teacherStats.PRESENT +
-    teacherStats.ABSENT;
+  }
+
+  /* ---------- TEACHER STATS ---------- */
+
+  const teacherStats = {
+    PRESENT:0,
+    ABSENT:0,
+    LEAVE:0,
+    HALF_DAY:0,
+    HOLIDAY:0
+  }
+
+  for(const t of teacherToday){
+
+    if(teacherStats[t.status] !== undefined){
+      teacherStats[t.status]++
+    }
+
+  }
+
+  /* ---------- MISSING ATTENDANCE ---------- */
+
+  const classesMarked = new Set(classesWithAttendance.map(c=>c.classId))
+
+  const allClasses = await client.class.findMany({
+    select:{ id:true }
+  })
+
+  const pendingClasses = allClasses.filter(
+    c => !classesMarked.has(c.id)
+  ).length
+
+  /* ---------- WEEKLY CHART ---------- */
+
+  const studentMap = {}
+  const teacherMap = {}
+
+  for(const row of weeklyStudents){
+    studentMap[formatISTDate(row.date)] = Number(row.present)
+  }
+
+  for(const row of weeklyTeachers){
+    teacherMap[formatISTDate(row.date)] = Number(row.present)
+  }
+
+  const weeklyChart = []
+
+  for(let i=0;i<7;i++){
+
+    const date = new Date(startOfWeek)
+    date.setDate(startOfWeek.getDate()+i)
+
+    const key = formatISTDate(date)
+
+    weeklyChart.push({
+      date:key,
+      studentsPresent: studentMap[key] || 0,
+      teachersPresent: teacherMap[key] || 0
+    })
+
+  }
 
   return {
-    totalClasses,
-    totalTeachers,
-    totalStudents,
 
-    presentStudents: studentStats.PRESENT,
-    absentStudents: studentStats.ABSENT,
-    leaveStudents: studentStats.LEAVE,
-    holidayStudents: studentStats.HOLIDAY,
+    overview:{
+      totalClasses,
+      totalStudents,
+      totalTeachers
+    },
 
-    presentTeachers: teacherStats.PRESENT,
-    absentTeachers: teacherStats.ABSENT,
+    todayAttendance:{
+      students:studentStats,
+      teachers:teacherStats
+    },
 
-    studentAttendancePercent:
-      studentTotal > 0
-        ? Math.round((studentStats.PRESENT / studentTotal) * 100)
-        : 0,
+    attendanceStatus:{
+      classesMarked: classesMarked.size,
+      pendingClasses
+    },
 
-    teacherAttendancePercent:
-      teacherTotal > 0
-        ? Math.round((teacherStats.PRESENT / teacherTotal) * 100)
-        : 0,
-  };
-};
+    charts:{
+      weeklyAttendance: weeklyChart
+    }
 
+  }
 
-
+}
 
 const formatISTDate = (date) => {
   return new Date(date).toLocaleDateString("en-CA", {
@@ -231,102 +449,65 @@ const formatISTDate = (date) => {
 };
 
 export const getDailyAttendanceStats = async (days = 7) => {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
 
-  const startDate = new Date(today);
-  startDate.setDate(today.getDate() - (days - 1));
+  const endDate = new Date();
+  endDate.setHours(23, 59, 59, 999);
 
-  /* ---------- STUDENT PRESENT PER DAY ---------- */
+  const startDate = new Date();
+  startDate.setDate(endDate.getDate() - (days - 1));
+  startDate.setHours(0, 0, 0, 0);
 
-  const studentDaily = await client.attendance.groupBy({
-    by: ["sessionId"],
-    where: {
-      status: "PRESENT",
-      session: {
-        date: {
-          gte: startDate,
-          lte: today,
-        },
-      },
-    },
-    _count: {
-      _all: true,
-    },
-  });
+  const [studentStats, teacherStats] = await Promise.all([
 
-  const sessions = await client.attendanceSession.findMany({
-    where: {
-      date: {
-        gte: startDate,
-        lte: today,
-      },
-    },
-    select: {
-      id: true,
-      date: true,
-    },
-  });
+    client.$queryRaw`
+      SELECT DATE(s.date) as date,
+             COUNT(a.id) as studentsPresent
+      FROM "Attendance" a
+      JOIN "AttendanceSession" s
+      ON a."sessionId" = s.id
+      WHERE a.status = 'PRESENT'
+      AND s.date BETWEEN ${startDate} AND ${endDate}
+      GROUP BY DATE(s.date)
+      ORDER BY DATE(s.date)
+    `,
 
-  const sessionDateMap = {};
-  sessions.forEach((s) => {
-    sessionDateMap[s.id] = formatISTDate(s.date);
-  });
+    client.$queryRaw`
+      SELECT DATE(date) as date,
+             COUNT(id) as teachersPresent
+      FROM "TeacherAttendance"
+      WHERE status = 'PRESENT'
+      AND "approvalStatus" = 'APPROVED'
+      AND date BETWEEN ${startDate} AND ${endDate}
+      GROUP BY DATE(date)
+      ORDER BY DATE(date)
+    `
+  ]);
 
   const studentMap = {};
-
-  studentDaily.forEach((item) => {
-    const key = sessionDateMap[item.sessionId];
-
-    if (!studentMap[key]) {
-      studentMap[key] = 0;
-    }
-
-    studentMap[key] += item._count._all;
-  });
-
-  /* ---------- TEACHER PRESENT PER DAY ---------- */
-
-  const teacherDaily = await client.teacherAttendance.groupBy({
-    by: ["date"],
-    where: {
-      date: {
-        gte: startDate,
-        lte: today,
-      },
-      status: "PRESENT",
-      approvalStatus: "APPROVED",
-    },
-    _count: {
-      _all: true,
-    },
-  });
-
   const teacherMap = {};
 
-  teacherDaily.forEach((t) => {
-    const key = formatISTDate(t.date);
-    teacherMap[key] = t._count._all;
-  });
+  for (const s of studentStats) {
+    studentMap[formatISTDate(s.date)] = Number(s.studentspresent);
+  }
 
-  /* ---------- BUILD FINAL RESULT ---------- */
+  for (const t of teacherStats) {
+    teacherMap[formatISTDate(t.date)] = Number(t.teacherspresent);
+  }
 
   const result = [];
 
- for (let i = 0; i < days; i++) {
+  for (let i = 0; i < days; i++) {
+    const date = new Date(startDate);
+    date.setDate(startDate.getDate() + i);
 
-  const date = new Date(startDate);
-  date.setDate(startDate.getDate() + i);
+    const key = formatISTDate(date);
 
-  const key = formatISTDate(date);
-
-  result.push({
-    date: key,
-    studentsPresent: studentMap[key] || 0,
-    teachersPresent: teacherMap[key] || 0
-  });
-
-}
+    result.push({
+      date: key,
+      studentsPresent: studentMap[key] || 0,
+      teachersPresent: teacherMap[key] || 0,
+    });
+  }
 
   return result;
 };

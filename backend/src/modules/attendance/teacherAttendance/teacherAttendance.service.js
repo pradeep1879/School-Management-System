@@ -1,10 +1,12 @@
 import { client } from "../../../prisma/db.js";
+import { getISTEndOfDay, getISTNow, getISTStartOfDay } from "../../../utils/date.js";
 
 /**
  * TEACHER SUBMIT ATTENDANCE
  */
 
 export const submitTeacherAttendance = async (body, teacherId) => {
+
   const { status, note } = body;
 
   if (!status) {
@@ -23,10 +25,11 @@ export const submitTeacherAttendance = async (body, teacherId) => {
     throw new Error("Invalid attendance status");
   }
 
-  const attendanceDate = new Date();
-  attendanceDate.setHours(0, 0, 0, 0);
-
+  const attendanceDate = getISTStartOfDay();
+  console.log("teacher attendace date", attendanceDate)
+  console.log("current time:",getISTStartOfDay())
   try {
+
     const attendance = await client.teacherAttendance.create({
       data: {
         teacherId,
@@ -41,31 +44,31 @@ export const submitTeacherAttendance = async (body, teacherId) => {
       message: "Attendance submitted successfully",
       attendance,
     };
+
   } catch (error) {
+
     if (error.code === "P2002") {
       throw new Error("Attendance already submitted for today");
     }
 
     throw error;
-  }
-};
 
+  }
+
+};
 
 
 export const getTodayAttendance = async (teacherId) => {
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  const tomorrow = new Date(today);
-  tomorrow.setDate(today.getDate() + 1);
+  const startOfDay = getISTStartOfDay();
+  const endOfDay = getISTEndOfDay();
 
   const attendance = await client.teacherAttendance.findFirst({
     where: {
       teacherId,
       date: {
-        gte: today,
-        lt: tomorrow,
+        gte: startOfDay,
+        lte: endOfDay,
       },
     },
     select: {
@@ -192,6 +195,7 @@ export const getPendingTeacherAttendance = async () => {
  */
 
 export const approveTeacherAttendance = async (attendanceId, adminId) => {
+
   const attendance = await client.teacherAttendance.findUnique({
     where: { id: attendanceId },
   });
@@ -203,13 +207,13 @@ export const approveTeacherAttendance = async (attendanceId, adminId) => {
   if (attendance.approvalStatus !== "PENDING") {
     throw new Error("Attendance already processed");
   }
-
+  console.log("approve teacher attendace", getISTNow())
   const updatedAttendance = await client.teacherAttendance.update({
     where: { id: attendanceId },
     data: {
       approvalStatus: "APPROVED",
       verifiedBy: adminId,
-      verifiedAt: new Date(),
+      verifiedAt: getISTNow(),
     },
   });
 
@@ -228,6 +232,7 @@ export const rejectTeacherAttendance = async (
   adminId,
   reason
 ) => {
+
   const attendance = await client.teacherAttendance.findUnique({
     where: { id: attendanceId },
   });
@@ -245,7 +250,7 @@ export const rejectTeacherAttendance = async (
     data: {
       approvalStatus: "REJECTED",
       verifiedBy: adminId,
-      verifiedAt: new Date(),
+      verifiedAt: getISTNow(),
       rejectionReason: reason,
     },
   });

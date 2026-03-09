@@ -7,7 +7,7 @@ const router = express.Router();
 router.get(
   "/",
   verifyUser(["admin"]),
-  dashboardController.getDashboardAnalytics
+  dashboardController.getAdminDashboard
 );
 
 router.get(

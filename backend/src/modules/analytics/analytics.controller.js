@@ -1,9 +1,9 @@
 import * as dashboardService from "./analytics.service.js";
 
-export const getDashboardAnalytics = async (req, res, next) => {
+export const getAdminDashboard = async (req, res, next) => {
   try {
 
-    const data = await dashboardService.getDashboardAnalytics();
+    const data = await dashboardService.getAdminDashboard();
 
     res.json(data);
 

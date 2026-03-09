@@ -18,7 +18,7 @@ export default function StudentAttendanceCard({
     data: studentData,
     isLoading: studentLoading,
   } = useStudentAttendance(studentId);
-
+  console.log("student attendance card", studentData)
   // If no studentId → student self view
   const {
     data: myData,

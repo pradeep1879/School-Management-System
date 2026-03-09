@@ -1,4 +1,5 @@
 import { client } from "../../../prisma/db.js";
+import { getISTStartOfDay } from "../../../utils/date.js";
 
 /**
  * MARK BULK ATTENDANCE
@@ -6,20 +7,31 @@ import { client } from "../../../prisma/db.js";
 /**
  * AUTO PRESENT DEFAULT LOGIC
  */
-export const markAttendance = async (body, teacherId) => {
-  const { classId, date, exceptions = [] } = body;
 
+
+export const markAttendance = async (body, teacherId) => {
+  console.log("mark attencade of student", teacherId)
+  const { classId, date, exceptions = [] } = body;
+  console.log("student fronted date", date)
   if (!classId || !date) {
     throw new Error("ClassId and date are required");
   }
 
+  /* ---------- IST DATE ---------- */
+
   const attendanceDate = new Date(date);
+  console.log(attendanceDate)
 
-  if (isNaN(attendanceDate.getTime())) {
-    throw new Error("Invalid date");
-  }
+    console.log(
+      "Attendance date:",
+      attendanceDate.toISOString()
+    );
 
-  attendanceDate.setHours(0, 0, 0, 0);
+  console.log("IST date:", attendanceDate.toLocaleString("en-IN", {
+  timeZone: "Asia/Kolkata"
+}))
+
+  /* ---------- CLASS VALIDATION ---------- */
 
   const classData = await client.class.findFirst({
     where: {
@@ -44,11 +56,15 @@ export const markAttendance = async (body, teacherId) => {
     throw new Error("No students found in class");
   }
 
+  /* ---------- EXCEPTION VALIDATION ---------- */
+
   const studentIds = new Set(students.map((s) => s.id));
   const seen = new Set();
+
   const allowedStatuses = ["ABSENT", "LATE", "LEAVE", "HOLIDAY"];
 
   for (const item of exceptions) {
+
     if (!studentIds.has(item.studentId)) {
       throw new Error("Invalid student in exceptions");
     }
@@ -62,6 +78,7 @@ export const markAttendance = async (body, teacherId) => {
     }
 
     seen.add(item.studentId);
+
   }
 
   const exceptionMap = new Map(
@@ -73,8 +90,12 @@ export const markAttendance = async (body, teacherId) => {
     status: exceptionMap.get(student.id) || "PRESENT",
   }));
 
+  /* ---------- TRANSACTION ---------- */
+
   try {
+
     const session = await client.$transaction(async (tx) => {
+
       const newSession = await tx.attendanceSession.create({
         data: {
           classId,
@@ -91,19 +112,24 @@ export const markAttendance = async (body, teacherId) => {
           status: record.status,
         })),
       });
-
+      console.log("new session", newSession)
       return newSession;
+      
     });
-
+    console.log("session", session)
     return {
       message: "Attendance marked successfully",
       sessionId: session.id,
     };
+
   } catch (error) {
+
     if (error?.code === "P2002") {
       throw new Error("Attendance already marked for this date");
     }
+
     throw error;
+
   }
 };
 
