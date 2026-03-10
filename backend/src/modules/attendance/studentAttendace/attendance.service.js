@@ -1,5 +1,5 @@
 import { client } from "../../../prisma/db.js";
-import { getISTStartOfDay } from "../../../utils/date.js";
+import { formatISTDate, getISTStartOfDay } from "../../../utils/date.js";
 
 /**
  * MARK BULK ATTENDANCE
@@ -10,26 +10,17 @@ import { getISTStartOfDay } from "../../../utils/date.js";
 
 
 export const markAttendance = async (body, teacherId) => {
-  console.log("mark attencade of student", teacherId)
+
   const { classId, date, exceptions = [] } = body;
-  console.log("student fronted date", date)
+
   if (!classId || !date) {
     throw new Error("ClassId and date are required");
   }
 
-  /* ---------- IST DATE ---------- */
+  /* ---------- IST SAFE DATE ---------- */
 
-  const attendanceDate = new Date(date);
-  console.log(attendanceDate)
-
-    console.log(
-      "Attendance date:",
-      attendanceDate.toISOString()
-    );
-
-  console.log("IST date:", attendanceDate.toLocaleString("en-IN", {
-  timeZone: "Asia/Kolkata"
-}))
+  const attendanceDate = new Date(formatISTDate(date));
+  console.log("attendace date from marke attendace", attendanceDate)
 
   /* ---------- CLASS VALIDATION ---------- */
 
@@ -56,10 +47,10 @@ export const markAttendance = async (body, teacherId) => {
     throw new Error("No students found in class");
   }
 
-  /* ---------- EXCEPTION VALIDATION ---------- */
+  /* ---------- VALIDATE EXCEPTIONS ---------- */
 
-  const studentIds = new Set(students.map((s) => s.id));
-  const seen = new Set();
+  const studentIds = new Set(students.map(s => s.id));
+  const exceptionMap = new Map();
 
   const allowedStatuses = ["ABSENT", "LATE", "LEAVE", "HOLIDAY"];
 
@@ -69,7 +60,7 @@ export const markAttendance = async (body, teacherId) => {
       throw new Error("Invalid student in exceptions");
     }
 
-    if (seen.has(item.studentId)) {
+    if (exceptionMap.has(item.studentId)) {
       throw new Error("Duplicate student in exceptions");
     }
 
@@ -77,17 +68,12 @@ export const markAttendance = async (body, teacherId) => {
       throw new Error("Invalid attendance status");
     }
 
-    seen.add(item.studentId);
-
+    exceptionMap.set(item.studentId, item.status);
   }
 
-  const exceptionMap = new Map(
-    exceptions.map((e) => [e.studentId, e.status])
-  );
-
-  const attendanceRecords = students.map((student) => ({
+  const attendanceRecords = students.map(student => ({
     studentId: student.id,
-    status: exceptionMap.get(student.id) || "PRESENT",
+    status: exceptionMap.get(student.id) || "PRESENT"
   }));
 
   /* ---------- TRANSACTION ---------- */
@@ -101,63 +87,58 @@ export const markAttendance = async (body, teacherId) => {
           classId,
           teacherId,
           adminId,
-          date: attendanceDate,
-        },
+          date: attendanceDate
+        }
       });
 
       await tx.attendance.createMany({
-        data: attendanceRecords.map((record) => ({
+        data: attendanceRecords.map(record => ({
           sessionId: newSession.id,
           studentId: record.studentId,
-          status: record.status,
-        })),
+          status: record.status
+        }))
       });
-      console.log("new session", newSession)
+
       return newSession;
-      
     });
-    console.log("session", session)
+
     return {
       message: "Attendance marked successfully",
-      sessionId: session.id,
+      sessionId: session.id
     };
 
   } catch (error) {
 
-    if (error?.code === "P2002") {
+    if (error.code === "P2002") {
       throw new Error("Attendance already marked for this date");
     }
 
     throw error;
-
   }
 };
-
 
 
 /**
  * GET ATTENDANCE BY CLASS & DATE
  */
-export const getAttendanceByDate = async (
-  classId,
-  date,
-  userId,
-  role
-) => {
-  if (!date) throw new Error("Date is required");
+export const getAttendanceByDate = async (classId, date) => {
 
   const attendanceDate = new Date(date);
-  attendanceDate.setHours(0, 0, 0, 0);
 
   const session = await client.attendanceSession.findUnique({
     where: {
       classId_date: {
         classId,
-        date: attendanceDate,
-      },
+        date: attendanceDate
+      }
     },
     include: {
       records: {
+        orderBy: {
+          student: {
+            rollNumber: "asc"
+          }
+        },
         select: {
           id: true,
           status: true,
@@ -165,17 +146,12 @@ export const getAttendanceByDate = async (
             select: {
               id: true,
               studentName: true,
-              rollNumber: true,
-            },
-          },
-        },
-        orderBy: {
-          student: {
-            rollNumber: "asc",
-          },
-        },
-      },
-    },
+              rollNumber: true
+            }
+          }
+        }
+      }
+    }
   });
 
   if (!session) {
@@ -183,9 +159,8 @@ export const getAttendanceByDate = async (
   }
 
   return {
-    message: "Attendance fetched successfully",
     sessionId: session.id,
-    attendance: session.records,
+    attendance: session.records
   };
 };
 
@@ -294,7 +269,7 @@ export const getStudentAttendanceHistory = async (
   const totalDays = attendanceRecords.length;
   const attendancePercentage =
     totalDays > 0
-      ? ((present + late) / totalDays) * 100
+      ? (((present + late) / totalDays) * 100)
       : 0;
 
   return {
@@ -326,13 +301,18 @@ export const updateAttendanceSession = async (
   exceptions,
   teacherId
 ) => {
+
   const session = await client.attendanceSession.findUnique({
     where: { id: sessionId },
     include: {
       class: {
-        include: { students: true },
-      },
-    },
+        include: {
+          students: {
+            select: { id: true }
+          }
+        }
+      }
+    }
   });
 
   if (!session) {
@@ -343,38 +323,60 @@ export const updateAttendanceSession = async (
     throw new Error("Unauthorized");
   }
 
-  const exceptionMap = new Map(
-    exceptions.map((e) => [e.studentId, e.status])
-  );
+  const studentIds = new Set(session.class.students.map(s => s.id));
+  const exceptionMap = new Map();
+
+  const allowedStatuses = ["ABSENT", "LATE", "LEAVE", "HOLIDAY"];
+
+  for (const item of exceptions) {
+
+    if (!studentIds.has(item.studentId)) {
+      throw new Error("Invalid student in exceptions");
+    }
+
+    if (exceptionMap.has(item.studentId)) {
+      throw new Error("Duplicate student in exceptions");
+    }
+
+    if (!allowedStatuses.includes(item.status)) {
+      throw new Error("Invalid attendance status");
+    }
+
+    exceptionMap.set(item.studentId, item.status);
+  }
 
   await client.$transaction(async (tx) => {
 
-    // reset everyone to PRESENT
+    /* Reset everyone to PRESENT */
+
     await tx.attendance.updateMany({
       where: { sessionId },
-      data: { status: "PRESENT" },
+      data: { status: "PRESENT" }
     });
 
-    // apply exceptions
-    for (const [studentId, status] of exceptionMap) {
-      await tx.attendance.update({
-        where: {
-          sessionId_studentId: {
-            sessionId,
-            studentId,
+    /* Apply exceptions */
+
+    const updates = Array.from(exceptionMap.entries()).map(
+      ([studentId, status]) =>
+        tx.attendance.update({
+          where: {
+            sessionId_studentId: {
+              sessionId,
+              studentId
+            }
           },
-        },
-        data: { status },
-      });
-    }
+          data: { status }
+        })
+    );
+
+    await Promise.all(updates);
 
   });
 
   return {
-    message: "Attendance updated successfully",
+    message: "Attendance updated successfully"
   };
 };
-
 
 export const getClassAttendanceSummary = async (
   classId,

@@ -3,7 +3,6 @@ import { useParams } from "react-router-dom";
 import { useTeacherClass } from "../../hooks/useTeacherClass";
 import { useClassDetail } from "../../hooks/useClassDetail";
 import ClassDetailHeader from "../../components/ClassDetailHeader";
-import { Skeleton } from "@/components/ui/skeleton";
 import { useState } from "react";
 import StudentsTable from "@/features/student/components/table/StudentTable";
 import ActivitiesSection from "@/features/activity/pages/ClassActivityPage";
@@ -12,6 +11,7 @@ import ExamPage from "@/features/exam/pages/ExamPage";
 import ClassAttendanceOverview from "@/features/attendance/components/ClassAttendanceOverview";
 
 import ExamAnalyticsDashboard from "@/features/exam/analytics/ExamAnalyticsDashboard";
+import { ClassDetailHeaderSkeleton } from "../../skeletons/ClassDetailHeaderSkeleton";
 
 const tabs = [
   { id: "analytics", label: "Analytics" },
@@ -23,7 +23,7 @@ const tabs = [
 ];
 
 const ClassDetail = () => {
-  const [activeTab, setActiveTab] = useState("students");
+  const [activeTab, setActiveTab] = useState("analytics");
   const role = useAuthStore((state) => state.role);
   const { classId } = useParams();
   
@@ -51,7 +51,7 @@ const ClassDetail = () => {
   if (isLoading) {
     return (
       <div className="space-y-4">
-        <Skeleton className="h-40 w-full rounded-xl" />
+       <ClassDetailHeaderSkeleton/>
       </div>
     );
   }

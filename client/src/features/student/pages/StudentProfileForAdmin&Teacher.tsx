@@ -1,10 +1,10 @@
 import { useParams } from "react-router-dom"
-import { Loader2 } from "lucide-react"
 import StudentProfileHeader from "../components/StudentProfileHeader"
 import { useState } from "react"
 import { useStudentProfile } from "../hooks/useStudentProfile"
 import StudentPerformanceTrendChart from "../components/analytics/StudentPerformanceTrendChart"
 import StudentSubjectPerformanceChart from "../components/analytics/StudentSubjectPerformanceChart"
+import { StudentProfileHeaderSkeleton } from "../skeleton/ProfileHeaderSkeleton"
 
 export default function StudentProfilePageAdminTeacher() {
   const { studentId } = useParams()
@@ -14,8 +14,8 @@ export default function StudentProfilePageAdminTeacher() {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center py-20">
-        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+      <div className="flex ">
+        <StudentProfileHeaderSkeleton/>
       </div>
     )
   }

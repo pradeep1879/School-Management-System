@@ -22,6 +22,15 @@
   background: hsl(var(--muted-foreground) / 0.4);
 }
 
+.custom-div-scroll {
+  @apply overflow-x-auto whitespace-nowrap;
+  scrollbar-width: none;
+}
+
+.custom-div-scroll::-webkit-scrollbar {
+  display: none;
+}
+
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);

@@ -88,7 +88,7 @@ export default function StudentsTable({
       {/* ================= TABLE ================= */}
       {!isLoading && (
         <>
-          <div className="rounded-xl border border-border/50 overflow-x-auto">
+          <div className="rounded-xl border custom-scrollbar border-border/50 overflow-x-auto">
             <table className="w-full min-w-225 text-sm">
               <thead className="bg-muted/40 border-b border-border/50">
                 <tr className="text-left">

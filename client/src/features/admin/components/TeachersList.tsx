@@ -1,4 +1,3 @@
-
 import { useNavigate } from "react-router-dom";
 
 import {
@@ -10,12 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-} from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -31,25 +25,18 @@ interface TeachersTableProps {
 const TeachersTable = ({ page = 1, limit = 10 }: TeachersTableProps) => {
   const navigate = useNavigate();
   const { data, isLoading, isError } = useTeachers(page, limit);
-  console.log("teachers table from admin", data)
-
+  console.log("teachers table from admin", data);
 
   return (
-    <Card className="shadow-sm border-border/60">
-      <CardHeader>
-        <CardTitle>Teachers Directory</CardTitle>
-      </CardHeader>
-
-      <CardContent>
-        {/* Loading */}
-       {isLoading && (
-      <div className="flex flex-col items-center justify-center py-12 gap-4">
-        <Loader2 className="h-10 w-10 animate-spin text-primary" />
-        <p className="text-sm text-muted-foreground">
-          Fetching teachers...
-        </p>
-      </div>
-    )}
+   <div className="">
+     {isLoading && (
+          <div className="flex flex-col items-center justify-center py-12 gap-4">
+            <Loader2 className="h-10 w-10 animate-spin text-primary" />
+            <p className="text-sm text-muted-foreground">
+              Fetching teachers...
+            </p>
+          </div>
+        )}
 
         {/* Error */}
         {isError && (
@@ -57,86 +44,90 @@ const TeachersTable = ({ page = 1, limit = 10 }: TeachersTableProps) => {
             Failed to load teachers
           </p>
         )}
+        {!isLoading && !data && (
+          <p className="text-center text-red-500 py-6">
+            Teachrs not found!!
+          </p>
+        )}
 
         {/* Table */}
         {!isLoading && !isError && (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Teacher</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Experience</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">
-                  Salary
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-
-            <TableBody>
-              {data?.teachers?.length === 0 && (
+          <div className="max-h-125 overflow-auto custom-scrollbar">
+            <div className="min-w-175">
+            <Table >
+              <TableHeader className="sticky top-0 bg-background z-10">
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center py-6">
-                    No teachers found
-                  </TableCell>
+                  <TableHead>Teacher</TableHead>
+                  <TableHead>Email</TableHead>
+                  <TableHead>Experience</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="text-right">Salary</TableHead>
                 </TableRow>
-              )}
+              </TableHeader>
 
-              {data?.teachers?.map((teacher: any) => (
-                <TableRow
-                  key={teacher.id}
-                  onClick={() =>
-                    navigate(`/admin/teacher-profile/${teacher.id}`)
-                  }
-                  className="hover:bg-muted/40 transition cursor-pointer"
-                >
-                  <TableCell>
-                    <div className="flex items-center gap-3">
-                      <Avatar className="h-10 w-10">
-                        <AvatarImage src={teacher.imageUrl} />
-                        <AvatarFallback>
-                          {teacher.teacherName?.charAt(0).toUpperCase()}
-                        </AvatarFallback>
-                      </Avatar>
+              <TableBody>
+                {data?.teachers?.map((teacher: any) => (
+                  <TableRow
+                    key={teacher.id}
+                    onClick={() =>
+                      navigate(`/admin/teacher-profile/${teacher.id}`)
+                    }
+                    className="cursor-pointer hover:bg-muted/40 transition"
+                  >
+                    {/* Teacher */}
+                    <TableCell>
+                      <div className="flex items-center gap-3">
+                        <Avatar className="h-9 w-9">
+                          <AvatarImage src={teacher.imageUrl} />
+                          <AvatarFallback>
+                            {teacher.teacherName?.charAt(0)}
+                          </AvatarFallback>
+                        </Avatar>
 
-                      <div>
-                        <p className="font-medium">
-                          {teacher.teacherName}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {teacher.experience}
-                        </p>
+                        <div>
+                          <p className="font-medium leading-none">
+                            {teacher.teacherName}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {teacher.experience}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  </TableCell>
+                    </TableCell>
 
-                  <TableCell>{teacher.email}</TableCell>
+                    {/* Email */}
+                    <TableCell className="text-muted-foreground">
+                      {teacher.email}
+                    </TableCell>
 
-                  <TableCell>{teacher.experience}</TableCell>
+                    {/* Experience */}
+                    <TableCell>{teacher.experience}</TableCell>
 
-                  <TableCell>
-                    <Badge variant="secondary">
-                      Active
-                    </Badge>
-                  </TableCell>
+                    {/* Status */}
+                    <TableCell>
+                      <Badge variant="secondary">Active</Badge>
+                    </TableCell>
 
-                  <TableCell className="text-right font-medium">
-                     {teacher?.salaryStructures?.map((bs:any) =>(
-                      <CountUp
-                      end={bs?.baseSalary || 0 }
-                      duration={1.5}
-                      separator=","
-                      prefix="₹"
-                      />
-                    ))}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+                    {/* Salary */}
+                    <TableCell className="text-right font-medium">
+                      {teacher.salaryStructures?.map((bs: any) => (
+                        <CountUp
+                          key={bs.id}
+                          end={bs?.baseSalary || 0}
+                          duration={1.2}
+                          separator=","
+                          prefix="₹"
+                        />
+                      ))}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+            </div>
+          </div>
         )}
-      </CardContent>
-    </Card>
+   </div>
   );
 };
 

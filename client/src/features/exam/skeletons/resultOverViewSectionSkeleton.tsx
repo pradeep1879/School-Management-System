@@ -1,9 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
-/* =========================
-   STATS CARDS SKELETON
-========================= */
+
 
 interface StatsCardsSkeletonProps {
   count?: number;
@@ -29,9 +27,7 @@ export function StatsCardsSkeleton({ count = 5 }: StatsCardsSkeletonProps) {
   );
 }
 
-/* =========================
-   TABLE SKELETON
-========================= */
+
 
 interface TableSkeletonProps {
   columns?: number;
@@ -68,9 +64,7 @@ export function TableSkeleton({ columns = 8, rows = 6 }: TableSkeletonProps) {
   );
 }
 
-/* =========================
-   FULL PAGE SKELETON
-========================= */
+
 
 interface PageSkeletonProps {
   cardCount?: number;

@@ -21,7 +21,7 @@ const TeacherNavbar = () => {
         logoutStore();
   
         // redirect
-        navigate("/teacher/login");
+        navigate("/teacherasdfasd/login");
       } catch (error) {
         console.error("Logout failed", error);
       }

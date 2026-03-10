@@ -31,6 +31,12 @@ export default function TeacherAttendanceHistoryStatsTable() {
       <div className="space-y-2">
         <Skeleton className="h-10 w-full" />
         <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
       </div>
     );
   }
@@ -38,16 +44,17 @@ export default function TeacherAttendanceHistoryStatsTable() {
   const records = data || [];
 
   return (
-    <div className="border rounded-xl overflow-hidden">
+    <div className="max-h-125  overflow-x-auto custom-scrollbar">
+      <div className="min-w-100">
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead>Teacher</TableHead>
+            <TableHead>Attendance</TableHead>
             <TableHead>Present</TableHead>
             <TableHead>Absent</TableHead>
             <TableHead>Leave</TableHead>
             <TableHead>Half Day</TableHead>
-            <TableHead>Attendance</TableHead>
             <TableHead className="text-right">View</TableHead>
           </TableRow>
         </TableHeader>
@@ -63,6 +70,17 @@ export default function TeacherAttendanceHistoryStatsTable() {
                     {item.teacherName?.charAt(0)}
                   </div>
                   {item.teacherName}
+                </div>
+              </TableCell>
+
+               {/* Attendance Percent */}
+              <TableCell className="min-w-35">
+                <div className="flex flex-col gap-1">
+                  <span className="text-sm font-medium">
+                    {item.attendancePercent}%
+                  </span>
+                  <Progress value={item.attendancePercent} 
+                    indicatorClassName={getAttendanceColor(item.attendancePercent)}/>
                 </div>
               </TableCell>
 
@@ -94,16 +112,6 @@ export default function TeacherAttendanceHistoryStatsTable() {
                 </Badge>
               </TableCell>
 
-              {/* Attendance Percent */}
-              <TableCell className="min-w-35">
-                <div className="flex flex-col gap-1">
-                  <span className="text-sm font-medium">
-                    {item.attendancePercent}%
-                  </span>
-                  <Progress value={item.attendancePercent} 
-                    indicatorClassName={getAttendanceColor(item.attendancePercent)}/>
-                </div>
-              </TableCell>
 
               {/* View Button */}
               <TableCell className="text-right">
@@ -122,6 +130,7 @@ export default function TeacherAttendanceHistoryStatsTable() {
           ))}
         </TableBody>
       </Table>
+    </div>
     </div>
   );
 }

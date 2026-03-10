@@ -48,7 +48,7 @@ const CustomTooltip = ({
 
 const DailyAttendanceChart = () => {
   const { data, isLoading } = useDashboardAnalytics();
-  console.log("daily attendance chart", data);
+
   const isMobile = useIsMobile();
 
   const barSize = isMobile ? 12 : 32;

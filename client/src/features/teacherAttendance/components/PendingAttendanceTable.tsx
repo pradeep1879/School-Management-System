@@ -21,6 +21,7 @@ import { useRejectAttendance } from "../hooks/useRejectAttendance";
 
 export default function PendingAttendanceTable() {
   const { data, isLoading } = usePendingTeacherAttendance();
+  console.log(data)
   const approve = useApproveAttendance();
   const reject = useRejectAttendance();
 
@@ -64,7 +65,7 @@ export default function PendingAttendanceTable() {
               </TableCell>
 
               <TableCell className="capitalize">
-                {item.approvalStatus.toLowerCase()}
+                {item.approvalStatus?.toLowerCase()}
               </TableCell>
 
               <TableCell className="flex justify-end gap-2">
@@ -80,9 +81,10 @@ export default function PendingAttendanceTable() {
 
                 <Button
                   size="sm"
+                  disabled={approve.isPending}
                   onClick={() => approve.mutate(item.id)}
                 >
-                  Approve
+                  {approve.isPending ? "Approving..." : "Approve"}
                 </Button>
 
                 <Button

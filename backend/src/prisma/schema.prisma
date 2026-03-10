@@ -259,8 +259,6 @@ model HomeworkSubject {
   subject         Subject  @relation(fields: [subjectId], references: [id])
 }
 
-
-
 model AttendanceSession {
   id        String   @id @default(uuid())
   classId   String
@@ -273,6 +271,7 @@ model AttendanceSession {
   admin     Admin    @relation(fields: [adminId], references: [id], onDelete: Cascade)
 
   records   Attendance[]
+  createdAt DateTime @default(now())
 
   @@unique([classId, date])
   @@index([classId, date])
@@ -291,6 +290,7 @@ model Attendance {
   @@unique([sessionId, studentId])
   @@index([status])
   @@index([studentId])
+  @@index([sessionId])
 }
 
 model Fee {
@@ -467,35 +467,35 @@ enum SalaryStatus {
 }
 
 model TeacherAttendance {
-  id               String                   @id @default(cuid())
+  id               String   @id @default(cuid())
 
   teacherId        String
-  teacher          Teacher                  @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  teacher          Teacher  @relation(fields: [teacherId], references: [id], onDelete: Cascade)
 
-  date             DateTime                 @db.Date
+  date             DateTime @db.Date
 
   status           TeacherAttendanceStatus
   note             String?
 
-  checkInTime      DateTime?                @db.Date
-  checkOutTime     DateTime?                @db.Date
+  checkInTime      DateTime?
+  checkOutTime     DateTime?
 
   approvalStatus   AttendanceApprovalStatus @default(PENDING)
 
   submittedById    String
-  submittedBy      Teacher                  @relation("TeacherAttendanceSubmitted", fields: [submittedById], references: [id])
+  submittedBy      Teacher @relation("TeacherAttendanceSubmitted", fields: [submittedById], references: [id])
 
-  submittedAt      DateTime                 @default(now())
+  submittedAt      DateTime @default(now())
 
   verifiedBy       String?
-  verifier         Admin?                   @relation(fields: [verifiedBy], references: [id])
+  verifier         Admin? @relation(fields: [verifiedBy], references: [id])
 
   verifiedAt       DateTime?
 
   rejectionReason  String?
 
-  createdAt        DateTime                 @default(now())
-  updatedAt        DateTime                 @updatedAt
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 
   @@unique([teacherId, date])
   @@index([date])

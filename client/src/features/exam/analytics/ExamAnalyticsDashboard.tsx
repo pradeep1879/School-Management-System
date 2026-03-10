@@ -9,6 +9,7 @@ import TopStudentsCard from "./TopStudentsCard";
 import { useExams } from "../hooks/useExam";
 import { useExamAnalytics } from "../hooks/analytics/useExamAnalytics";
 import OverviewCards from "./OverViewCards";
+import { ExamDashboardSkeleton } from "../skeletons/ExamDashboardSkeleton";
 
 interface Props {
   classId: string;
@@ -28,7 +29,7 @@ const ExamAnalyticsDashboard = ({ classId }: Props) => {
   }, [exams]);
 
   const { data, isLoading } = useExamAnalytics(examId!);
-  console.log("exam analytics dahsboard", data)
+
   const analytics = data;
 
   if (!examId) return null;
@@ -39,7 +40,7 @@ const ExamAnalyticsDashboard = ({ classId }: Props) => {
       {/* Exam Selector */}
       <div className="flex justify-between items-center">
         <h2 className="text-lg font-semibold">Exam Analytics</h2>
-
+      
         <ExamSelector
           exams={exams}
           selectedExam={examId}
@@ -47,7 +48,7 @@ const ExamAnalyticsDashboard = ({ classId }: Props) => {
         />
       </div>
 
-      {isLoading && <p>Loading analytics...</p>}
+      {isLoading && <ExamDashboardSkeleton/>}
 
       {analytics && (
         <>

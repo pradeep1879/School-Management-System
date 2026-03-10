@@ -1,57 +1,44 @@
-/**
- * Convert any date to IST
- */
+import utc from "dayjs/plugin/utc.js"
+import timezone from "dayjs/plugin/timezone.js"
+import dayjs from "dayjs"
 
-export const toIST = (inputDate = new Date()) => {
-  return new Date(
-    new Date(inputDate).toLocaleString("en-US", {
-      timeZone: "Asia/Kolkata",
-    })
-  );
-};
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
+const IST = "Asia/Kolkata"
 
-/**
- * Start of day in IST (00:00:00)
- */
-
-export const getISTStartOfDay = (inputDate = new Date()) => {
-  const date = toIST(inputDate);
-  date.setHours(0, 0, 0, 0);
-  return date;
-};
-
-
-/**
- * End of day in IST (23:59:59)
- */
-
-export const getISTEndOfDay = (inputDate = new Date()) => {
-  const date = toIST(inputDate);
-  date.setHours(23, 59, 59, 999);
-  return date;
-};
-
-
-/**
- * Current IST timestamp
- */
+/* ---------- CURRENT IST TIME ---------- */
 
 export const getISTNow = () => {
-  return toIST(new Date());
-};
+  return dayjs().tz(IST).toDate()
+}
 
+/* ---------- IST DATE STRING (YYYY-MM-DD) ---------- */
 
-/**
- * Format date as YYYY-MM-DD (IST)
- */
+export const getISTDate = () => {
+  return dayjs().tz(IST).format("YYYY-MM-DD")
+}
 
-export const formatISTDate = (inputDate = new Date()) => {
-  const date = toIST(inputDate);
+/* ---------- START OF DAY IST ---------- */
 
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
+export const getISTStartOfDay = () => {
+  return dayjs().tz(IST).startOf("day").toDate()
+}
 
-  return `${year}-${month}-${day}`;
-};
+/* ---------- END OF DAY IST ---------- */
+
+export const getISTEndOfDay = () => {
+  return dayjs().tz(IST).endOf("day").toDate()
+}
+
+/* ---------- FORMAT DATE TO IST STRING ---------- */
+
+export const formatISTDate = (date) => {
+  return dayjs(date).tz(IST).format("YYYY-MM-DD")
+}
+
+/* ---------- CONVERT INPUT DATE TO DB DATE ---------- */
+
+export const toISTDate = (date) => {
+  return dayjs(date).tz(IST).startOf("day").toDate()
+}

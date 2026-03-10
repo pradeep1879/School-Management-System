@@ -15,7 +15,6 @@ import syllabusRoutes from "./src/modules/subject/syllabus/syllabus.routes.js";
 import activityRoutes from "./src/modules/activity/activity.routes.js";
 import examRoutes from "./src/modules/exam/exam.routes.js";
 import homeWorkRoutes from "./src/modules/homeWork/homework.routes.js";
-import { globalErrorHandler } from "./src/middlewares/error.middleware.js";
 import attendanceRoutes from "./src/modules/attendance/studentAttendace/attendance.routes.js";
 import feeRoutes from "./src/modules/fee/fee.routes.js";
 import teacherAttendanceRoutes from './src/modules/attendance/teacherAttendance/teacherAttendance.routes.js'
@@ -23,7 +22,8 @@ import teacherSalaryRoutes from "./src/modules/salary/salary.routes.js";
 import analyticsRoutes from "./src/modules/analytics/analytics.routes.js"
 import examAnalyticsRoutes from "./src/modules/analytics/exam/exm.ana.routes.js"
 
-import { startTeacherAttendanceCron } from "./src/modules/attendance/teacherAttendance/teacherAttendance.cron.js";
+import { globalErrorHandler } from "./src/middlewares/error.middleware.js";
+// import { startTeacherAttendanceCron } from "./src/modules/attendance/teacherAttendance/teacherAttendance.cron.js";
 
 
 const app = express();
@@ -69,8 +69,8 @@ app.use("/api/v1/analytics", analyticsRoutes);
 
 app.use(globalErrorHandler);
 
+// startTeacherAttendanceCron();
 app.listen(process.env.PORT, () =>{
-  startTeacherAttendanceCron();
   console.log(process.env.PORT);
 })
 

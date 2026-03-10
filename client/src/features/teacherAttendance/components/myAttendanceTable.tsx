@@ -55,7 +55,8 @@ export default function MyAttendanceTable({ teacherId }: Props) {
   const records = data || [];
 
   return (
-    <div className="border rounded-xl">
+    <div className="w-full overflow-x-auto custom-scrollbar">
+      <div className="min-w-100">
       <Table>
         <TableHeader>
           <TableRow>
@@ -99,6 +100,7 @@ export default function MyAttendanceTable({ teacherId }: Props) {
           ))}
         </TableBody>
       </Table>
+    </div>
     </div>
   );
 }

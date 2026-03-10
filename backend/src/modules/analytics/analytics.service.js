@@ -1,4 +1,5 @@
 import { client } from "../../prisma/db.js";
+import { formatISTDate } from "../../utils/date.js";
 
 // export const getDashboardAnalytics = async () => {
 //   const today = new Date();
@@ -232,17 +233,10 @@ import { client } from "../../prisma/db.js";
 
 export const getAdminDashboard = async () => {
 
-  const today = new Date()
-
-  const startOfDay = new Date(today)
-  startOfDay.setHours(0,0,0,0)
-
-  const endOfDay = new Date(today)
-  endOfDay.setHours(23,59,59,999)
+  const today = new Date(formatISTDate())
 
   const startOfWeek = new Date(today)
   startOfWeek.setDate(today.getDate() - 6)
-  startOfWeek.setHours(0,0,0,0)
 
   const [
     totalClasses,
@@ -268,32 +262,17 @@ export const getAdminDashboard = async () => {
     /* Classes that marked attendance today */
 
     client.attendanceSession.findMany({
-      where:{
-        date:{
-          gte:startOfDay,
-          lte:endOfDay
-        }
-      },
-      select:{
-        classId:true
-      }
+      where:{ date: today },
+      select:{ classId:true }
     }),
 
     /* Student attendance today */
 
     client.attendance.findMany({
       where:{
-        session:{
-          date:{
-            gte:startOfDay,
-            lte:endOfDay
-          }
-        }
+        session:{ date: today }
       },
-      select:{
-        studentId:true,
-        status:true
-      }
+      select:{ status:true }
     }),
 
     /* Teacher attendance today */
@@ -301,14 +280,9 @@ export const getAdminDashboard = async () => {
     client.teacherAttendance.findMany({
       where:{
         approvalStatus:"APPROVED",
-        date:{
-          gte:startOfDay,
-          lte:endOfDay
-        }
+        date: today
       },
-      select:{
-        status:true
-      }
+      select:{ status:true }
     }),
 
     /* Weekly student chart */
@@ -320,7 +294,7 @@ export const getAdminDashboard = async () => {
       JOIN "AttendanceSession" s
       ON a."sessionId" = s.id
       WHERE a.status = 'PRESENT'
-      AND s.date BETWEEN ${startOfWeek} AND ${endOfDay}
+      AND s.date BETWEEN ${startOfWeek} AND ${today}
       GROUP BY DATE(s.date)
       ORDER BY DATE(s.date)
     `,
@@ -333,7 +307,7 @@ export const getAdminDashboard = async () => {
       FROM "TeacherAttendance"
       WHERE status='PRESENT'
       AND "approvalStatus"='APPROVED'
-      AND date BETWEEN ${startOfWeek} AND ${endOfDay}
+      AND date BETWEEN ${startOfWeek} AND ${today}
       GROUP BY DATE(date)
       ORDER BY DATE(date)
     `
@@ -348,13 +322,11 @@ export const getAdminDashboard = async () => {
     HOLIDAY:0
   }
 
-  for(const record of studentToday){
-
+  studentToday.forEach(record=>{
     if(studentStats[record.status] !== undefined){
       studentStats[record.status]++
     }
-
-  }
+  })
 
   /* ---------- TEACHER STATS ---------- */
 
@@ -366,38 +338,30 @@ export const getAdminDashboard = async () => {
     HOLIDAY:0
   }
 
-  for(const t of teacherToday){
-
+  teacherToday.forEach(t=>{
     if(teacherStats[t.status] !== undefined){
       teacherStats[t.status]++
     }
-
-  }
+  })
 
   /* ---------- MISSING ATTENDANCE ---------- */
 
   const classesMarked = new Set(classesWithAttendance.map(c=>c.classId))
 
-  const allClasses = await client.class.findMany({
-    select:{ id:true }
-  })
-
-  const pendingClasses = allClasses.filter(
-    c => !classesMarked.has(c.id)
-  ).length
+  const pendingClasses = totalClasses - classesMarked.size
 
   /* ---------- WEEKLY CHART ---------- */
 
   const studentMap = {}
   const teacherMap = {}
 
-  for(const row of weeklyStudents){
+  weeklyStudents.forEach(row=>{
     studentMap[formatISTDate(row.date)] = Number(row.present)
-  }
+  })
 
-  for(const row of weeklyTeachers){
+  weeklyTeachers.forEach(row=>{
     teacherMap[formatISTDate(row.date)] = Number(row.present)
-  }
+  })
 
   const weeklyChart = []
 
@@ -442,11 +406,7 @@ export const getAdminDashboard = async () => {
 
 }
 
-const formatISTDate = (date) => {
-  return new Date(date).toLocaleDateString("en-CA", {
-    timeZone: "Asia/Kolkata"
-  });
-};
+
 
 export const getDailyAttendanceStats = async (days = 7) => {
 

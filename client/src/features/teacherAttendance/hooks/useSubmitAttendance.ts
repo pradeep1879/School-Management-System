@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { submitAttendance } from "../api/teacherAttendance.api";
 import { toast } from "sonner";
 
-export const useSubmitAttendance = () => {
+export const  useSubmitAttendance = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -10,7 +10,9 @@ export const useSubmitAttendance = () => {
 
     onSuccess: (data) => {
       toast.success(data?.message);
-      queryClient.invalidateQueries({ queryKey: ["my-attendance"] });
+       queryClient.invalidateQueries({
+        queryKey: ["today-attendance"],
+      });
     },
 
     onError: (error: any) => {

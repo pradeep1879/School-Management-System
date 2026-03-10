@@ -27,6 +27,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarSeparator,
+  useSidebar,
 } from "@/components/ui/sidebar";
 
 import {
@@ -39,6 +40,7 @@ import {
 import { cn } from "@/lib/utils";
 
 const StudentSidebar = () => {
+  const { setOpenMobile } = useSidebar()
   const location = useLocation();
 
   const items = [
@@ -89,6 +91,7 @@ const StudentSidebar = () => {
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>
                       <Link
+                        onClick={() => setOpenMobile(false)}
                         to={item.url}
                         className={cn(
                           "relative flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 group",

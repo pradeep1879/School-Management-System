@@ -5,9 +5,6 @@ import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import AddTeacher from "../components/AddTeacher";
 import { useState } from "react";
 
-
-
-import CollectFeeSection from "../../class/components/ClassFee";
 import TeachersTable from "../components/TeachersList";
 import PendingAttendanceTable from "@/features/teacherAttendance/components/PendingAttendanceTable";
 import TeacherAttendanceHistoryStatsTable from "@/features/teacherAttendance/components/AttendanceHistoryTable";
@@ -16,15 +13,13 @@ const tabs = [
   { id: "all-teachers", label: "All Teachers" },
   { id: "attendance", label: "Attendance" },
   { id: "attendance-history", label: "Attendance History" },
-  { id: "make-payment", label: "Make Payment" },
-
 ];
 
 
 
 
 const Teachers = () => {
-  const [activeTab, setActiveTab] = useState("attendance");
+  const [activeTab, setActiveTab] = useState("all-teachers");
   const [open, setOpen] = useState(false);
 
 
@@ -53,7 +48,7 @@ const Teachers = () => {
       </div>
 
       {/* ================= TABS ================= */}
-      <div className="flex gap-3 sm:gap-6 md:gap-8 border-b">
+      <div className="flex gap-6  md:gap-8 border-b custom-div-scroll">
         {tabs.map((tab) => (
           <button
             key={tab.id}
@@ -91,10 +86,7 @@ const Teachers = () => {
           <TeacherAttendanceHistoryStatsTable/>
         </div>
       )}
-      
-      {activeTab === "make-payment" && (
-        <CollectFeeSection/>
-      )}
+    
     </div>
   );
 };

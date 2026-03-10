@@ -14,7 +14,7 @@ interface Props {
 
 const ExamSelector = ({ exams, selectedExam, onChange }: Props) => {
   return (
-    <div className="w-[240px]">
+    <div className="w-60">
       <Select value={selectedExam} onValueChange={onChange}>
         <SelectTrigger>
           <SelectValue placeholder="Select Exam" />

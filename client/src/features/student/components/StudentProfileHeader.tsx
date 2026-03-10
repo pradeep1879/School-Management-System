@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { useAuthStore } from "@/store/auth.store"
 
-
 interface Props {
   student: any
 }
@@ -14,13 +13,16 @@ export default function StudentProfileHeader({ student }: Props) {
   const role = useAuthStore((state) => state.role)
 
   return (
-    <Card className="p-6">
-      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+    <Card className="p-5 sm:p-6">
+      <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-6">
 
-        <div className="flex items-center gap-6">
-          <Avatar className="h-24 w-24">
+        {/* LEFT SECTION */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5">
+
+          {/* Avatar */}
+          <Avatar className="h-20 w-20 sm:h-24 sm:w-24">
             <AvatarImage src={student.imageUrl} />
-            <AvatarFallback>
+            <AvatarFallback className="text-lg">
               {student.studentName
                 ?.split(" ")
                 .map((n: string) => n[0])
@@ -28,43 +30,60 @@ export default function StudentProfileHeader({ student }: Props) {
             </AvatarFallback>
           </Avatar>
 
-          <div>
-            <h1 className="text-3xl font-semibold">
+          {/* Student Info */}
+          <div className="space-y-2">
+
+            <h1 className="text-2xl sm:text-3xl font-semibold leading-tight">
               {student.studentName}
             </h1>
 
-            <p className="text-muted-foreground">
+            <p className="text-sm text-muted-foreground">
               Class {student.class?.slug} • Roll No: {student.rollNumber}
             </p>
 
-            <div className="flex flex-wrap gap-3 mt-2">
+            {/* Status Badges */}
+            <div className="flex flex-wrap gap-2 mt-1">
               <Badge variant="secondary">Active</Badge>
+
               <Badge variant="outline">
-                Admission Date: {new Date(student.admissionDate).toLocaleDateString()}
+                Admission:{" "}
+                {new Date(student.admissionDate).toLocaleDateString()}
               </Badge>
             </div>
 
-            <div className="flex flex-wrap gap-4 text-sm text-muted-foreground mt-4">
-              <div className="flex items-center gap-1">
-                <Mail size={14} /> {student.userName}
+            {/* Contact Information */}
+            <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground mt-3">
+
+              <div className="flex items-center gap-2">
+                <Mail size={14} />
+                <span className="break-all">{student.userName}</span>
               </div>
-              <div className="flex items-center gap-1">
-                <Phone size={14} /> {student.contactNo}
+
+              <div className="flex items-center gap-2">
+                <Phone size={14} />
+                {student.contactNo}
               </div>
-              <div className="flex items-center gap-1">
-                <Users size={14} /> Parent: {student.fatherName}
+
+              <div className="flex items-center gap-2">
+                <Users size={14} />
+                Parent: {student.fatherName}
               </div>
+
             </div>
+
           </div>
         </div>
 
-        {/* Role-based Edit */}
+        {/* ACTIONS */}
         {role === "admin" && (
-          <Button variant="outline" className="gap-2">
-            <Pencil size={14} />
-            Edit
-          </Button>
+          <div className="flex flex-wrap gap-3">
+            <Button variant="outline" className="gap-2">
+              <Pencil size={14} />
+              Edit
+            </Button>
+          </div>
         )}
+
       </div>
     </Card>
   )

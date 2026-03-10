@@ -2,12 +2,13 @@ import { useState, useMemo } from "react";
 import { useClassAttendanceSummary } from "../hooks/useClassAttendanceSummary";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
+
 import { BarChart3, CalendarDays, Search, Users } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import StudentAttendanceCard from "./StudentAttendanceCard";
 import { AttendanceTopStatsCards } from "./AttendanceTopStatsCards";
+import StudentsAttendanceTable from "./table/StudentsAttendanceTable";
+import { ClassAttendanceOverviewSkeleton } from "../skeletons/ClassAttendanceOverviewSkeleton";
 
 
 interface Props {
@@ -41,8 +42,7 @@ export default function ClassAttendanceOverview({
   if (isLoading) {
     return (
       <div className="space-y-4">
-        <Skeleton className="h-32 w-full" />
-        <Skeleton className="h-80 w-full" />
+        <ClassAttendanceOverviewSkeleton/>
       </div>
     );
   }
@@ -92,76 +92,11 @@ export default function ClassAttendanceOverview({
       </div>
 
     {/* ================= TABLE ================= */}
-    <div className="overflow-x-auto custom-scrollbar rounded-lg border">
-      <table className="min-w-127.5 w-full text-xs sm:text-sm">
-        <thead className="bg-muted">
-          <tr>
-            <th className="text-left p-2 sm:p-3">Student</th>
-            <th className="text-left p-2 sm:p-3">Present</th>
-            <th className="text-left p-2 sm:p-3">Absent</th>
-            <th className="text-left p-2 sm:p-3 hidden sm:table-cell">Late</th>
-            <th className="text-left p-2 sm:p-3 hidden md:table-cell">Leave</th>
-            <th className="text-left p-2 sm:p-3">%</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {filteredStudents.map((student) => (
-            <tr key={student.id} onClick={() => setSelectedStudent(student.id)}
-             className="border-t cursor-pointer">
-              <td className="p-2 sm:p-3">
-                <div>
-                  <p className="font-medium">
-                    {student.studentName}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    Roll: {student.rollNumber}
-                  </p>
-                </div>
-              </td>
-
-              <td className="p-2 sm:p-3">
-                <Badge className="bg-green-500 text-white text-xs">
-                  {student.present}
-                </Badge>
-              </td>
-
-              <td className="p-2 sm:p-3">
-                <Badge className="bg-red-500 text-white text-xs">
-                  {student.absent}
-                </Badge>
-              </td>
-
-              {/* Hide on small screens */}
-              <td className="p-2 sm:p-3 hidden sm:table-cell">
-                <Badge className="bg-yellow-500 text-white text-xs">
-                  {student.late}
-                </Badge>
-              </td>
-
-              <td className="p-2 sm:p-3 hidden md:table-cell">
-                <Badge className="bg-blue-500 text-white text-xs">
-                  {student.leave}
-                </Badge>
-              </td>
-
-              <td className="p-2 sm:p-3 w-32 sm:w-40">
-                <div className="space-y-1">
-                  <Progress
-                    value={Number(student.attendancePercentage)}
-                    className="h-2"
-                    indicatorClassName={getAttendanceColor(Number(student?.attendancePercentage))}
-                  />
-                  <p className="text-[10px] sm:text-xs">
-                    {student.attendancePercentage}%
-                  </p>
-                </div>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+      <StudentsAttendanceTable
+        students={filteredStudents}
+        getAttendanceColor={getAttendanceColor}
+        onRowClick={(id) => setSelectedStudent(id)}
+      />
 
     {selectedStudent && (
       <Dialog

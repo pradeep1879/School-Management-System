@@ -10,7 +10,7 @@ import { useTodayAttendance } from "../hooks/useMyAttendance";
 export default function AttendanceActionCard() {
   const { mutate, isPending } = useSubmitAttendance();
   const { data } = useTodayAttendance();
-  console.log("attendance actiond card", data)
+
 
   const handleSubmit = (status: string) => {
     mutate({ status });
