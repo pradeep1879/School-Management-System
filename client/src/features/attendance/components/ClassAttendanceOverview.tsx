@@ -1,7 +1,6 @@
 import { useState, useMemo } from "react";
 import { useClassAttendanceSummary } from "../hooks/useClassAttendanceSummary";
 import { Input } from "@/components/ui/input";
-import { Skeleton } from "@/components/ui/skeleton";
 
 import { BarChart3, CalendarDays, Search, Users } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
