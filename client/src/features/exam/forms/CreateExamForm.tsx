@@ -100,7 +100,9 @@ export default function AddExamDialog({
       </DialogHeader>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 mt-4 ">
-        {/* ================= Exam Info ================= */}
+
+        {/* Exam Info */}
+
         <div className="space-y-4">
           <Input
             placeholder="Exam Title"
@@ -129,7 +131,8 @@ export default function AddExamDialog({
           />
         </div>
 
-        {/* ================= Subjects Section ================= */}
+        {/*  Subjects Section */}
+
         <div className="space-y-4">
           <h4 className="font-medium text-sm">Subjects</h4>
 
@@ -167,6 +170,7 @@ export default function AddExamDialog({
                 </div>
 
                 {/* Total Marks */}
+
                 <div className="col-span-3">
                   <Input
                     type="number"
@@ -179,6 +183,7 @@ export default function AddExamDialog({
                 </div>
 
                 {/* Passing Marks */}
+
                 <div className="col-span-3">
                   <Input
                     type="number"
@@ -191,6 +196,7 @@ export default function AddExamDialog({
                 </div>
 
                 {/* Remove */}
+
                 <div className="col-span-2 text-right">
                   {fields.length > 1 && (
                     <Button
@@ -204,7 +210,8 @@ export default function AddExamDialog({
                 </div>
               </div>
 
-              {/* 🔥 Syllabus Field */}
+              {/*  Syllabus Field */}
+              
               <Input
                 placeholder="Syllabus (e.g., Chapter 1-3, Algebra & Geometry)"
                 {...register(`subjects.${index}.syllabus`)}

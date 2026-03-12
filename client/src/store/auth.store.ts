@@ -1,3 +1,4 @@
+
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
 
@@ -16,7 +17,7 @@ interface AuthState {
   }) => void
 
   logout: () => void
-  setHasHydrated: (state: boolean) => void
+  setHasHydrated: (state: boolean) => void // (Used to detect when persisted state finished loading.)
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -52,3 +53,4 @@ export const useAuthStore = create<AuthState>()(
     }
   )
 )
+

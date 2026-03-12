@@ -5,9 +5,9 @@ import express from 'express';
 import cors from 'cors';
 import cookieParser from "cookie-parser";
 import fileUpload from "express-fileupload";
-import adminRoutes from '../backend/src/modules/admin/admin.routes.js'
+import adminRoutes from './src/modules/admin/admin.routes.js'
 // import studentRoute from '../backend/src/routes/student.routes.js'
-import teacherRoutes from "../backend/src/modules/teacher/teacher.routes.js";
+import teacherRoutes from "./src/modules/teacher/teacher.routes.js";
 import classRoutes from "./src/modules/class/class.routes.js";
 import studentRoutes from "./src/modules/student/student.routes.js";
 import subjectRoutes from "./src/modules/subject/subject.routes.js";

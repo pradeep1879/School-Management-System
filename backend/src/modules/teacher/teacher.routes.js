@@ -7,7 +7,7 @@ const router = express.Router();
 /* Public */
 router.post("/login", teacherController.loginTeacher);
 
-/* Teacher Profile (must come before :id) */
+/* Teacher Profile ,:id routes should put at end */
 router.get("/profile", verifyUser(["teacher"]), teacherController.getProfile);
 router.post("/logout", verifyUser(["teacher"]),  teacherController.logout);
 

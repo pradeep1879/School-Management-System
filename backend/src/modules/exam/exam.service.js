@@ -50,11 +50,7 @@ export const createExam = async (body, userId, role) => {
 
   //  Validate marks
   for (const subject of subjects) {
-    if (
-      !subject.subjectId ||
-      subject.totalMarks == null ||
-      subject.passingMarks == null
-    ) {
+    if (!subject.subjectId || subject.totalMarks == null || subject.passingMarks == null) {
       throw new Error(
         "Each subject must have subjectId, totalMarks and passingMarks"
       );
@@ -79,52 +75,52 @@ export const createExam = async (body, userId, role) => {
   }
 
 
+  const exam = await client.$transaction(async (tx) => {
 
-  const exam = await client.exam.create({
-    data: {
-      title,
-      examType,
-      startDate: new Date(startDate),
-      endDate: endDate ? new Date(endDate) : null,
-      classId,
-      teacherId: userId,
-    },
-  });
+    const exam = await tx.exam.create({
+      data: {
+        title,
+        examType,
+        startDate: new Date(startDate),
+        endDate: endDate ? new Date(endDate) : null,
+        classId,
+        teacherId: userId,
+      },
+    });
 
+    const examSubjects = await Promise.all(
+      subjects.map((subject) =>
+        tx.examSubject.create({
+          data: {
+            examId: exam.id,
+            subjectId: subject.subjectId,
+            syllabus: subject.syllabus || null,
+            totalMarks: Number(subject.totalMarks),
+            passingMarks: Number(subject.passingMarks),
+          },
+        })
+      )
+    );
 
+    const resultsData = [];
 
-  const examSubjects = await Promise.all(
-    subjects.map((subject) =>
-      client.examSubject.create({
-        data: {
-          examId: exam.id,
-          subjectId: subject.subjectId,
-          syllabus: subject.syllabus || null,
-          totalMarks: Number(subject.totalMarks),
-          passingMarks: Number(subject.passingMarks),
-        },
-      })
-    )
-  );
-
-
-
-  const resultsData = [];
-
-  for (const examSubject of examSubjects) {
-    for (const student of students) {
-      resultsData.push({
-        examSubjectId: examSubject.id,
-        studentId: student.id,
-      });
+    for (const examSubject of examSubjects) {
+      for (const student of students) {
+        resultsData.push({
+          examSubjectId: examSubject.id,
+          studentId: student.id,
+        });
+      }
     }
-  }
+
+    await tx.examResult.createMany({
+      data: resultsData,
+    });
+
+    return exam;
+});
 
 
-
-  await client.examResult.createMany({
-    data: resultsData,
-  });
 
   return {
     success: true,
@@ -162,13 +158,14 @@ export const updateExamStatus = async (examId, status, role) => {
     "CANCELLED",
   ];
 
+  if (role !== "teacher" && role !== "admin") {
+    throw new Error("Unauthorized");
+  }
+
   if (!allowed.includes(status)) {
     throw new Error("Invalid exam status");
   }
 
-  if (role !== "teacher" && role !== "admin") {
-    throw new Error("Unauthorized");
-  }
 
   const existing = await client.exam.findUnique({
     where: { id: examId },
@@ -214,16 +211,16 @@ export const publishExam = async (examId, role) => {
   if (!exam) throw new Error("Exam not found");
 
   if (exam.status !== "EVALUATION") {
-    throw new Error("Exam must be in evaluation stage before publishing");
+    throw new Error("Exam must be in evaluation stage before publishing.");
   }
 
   //  Check if any result has null marks
   const hasUnmarked = exam.subjects.some((subject) =>
     subject.results.some((result) => result.obtainedMarks === null)
-  );
+  );  
 
   if (hasUnmarked) {
-    throw new Error("All marks must be entered before publishing");
+    throw new Error("All marks must be entered before publishing.");
   }
 
   const updated = await client.exam.update({
@@ -300,7 +297,7 @@ export const getSubjectResults = async (
     throw new Error("Exam ID and Subject ID required");
   }
 
-  // 🔎 Get exam with teacherId + status
+  //  Get exam with teacherId + status
   const exam = await client.exam.findUnique({
     where: { id: examId },
     select: {
@@ -367,6 +364,8 @@ export const getSubjectResults = async (
   };
 };
 
+
+
 export const bulkUpdateMarks = async (
   updates,
   role,
@@ -376,7 +375,7 @@ export const bulkUpdateMarks = async (
     throw new Error("Marks data required");
   }
 
-  // 1️⃣ First validate everything outside transaction
+  //  First validate everything outside transaction
   const results = await client.examResult.findMany({
     where: {
       id: { in: updates.map((u) => u.resultId) },
@@ -417,7 +416,7 @@ export const bulkUpdateMarks = async (
     }
   }
 
-  // 2️⃣ Create update operations
+  //  Create update operations
   const operations = updates.map((item) =>
     client.examResult.update({
       where: { id: item.resultId },
@@ -425,13 +424,15 @@ export const bulkUpdateMarks = async (
     })
   );
 
-  // 3️⃣ Execute batch transaction (SAFE)
+  //  Execute batch transaction (SAFE)
   await client.$transaction(operations);
 
   return {
-    message: "Marks updated successfully",
+    message: "Marks(Bluk) updated successfully",
   };
 };
+
+
 
 const calculateGrade = (percentage) => {
   if (percentage >= 90) return "A+";
@@ -443,80 +444,245 @@ const calculateGrade = (percentage) => {
 };
 
 
+// export const getExamResultsOverview = async (examId) => {
+//   if (!examId) throw new Error("Exam ID required");
+
+//   const exam = await client.exam.findUnique({
+//     where: { id: examId },
+//     include: {
+//       subjects: {
+//         include: {
+//           results: {
+//             include: {
+//               student: true,
+//             },
+//           },
+//         },
+//       },
+//     },
+//   });
+
+//   if (!exam) throw new Error("Exam not found");
+
+//   // Only allow viewing after publish
+//   if (exam.status !== "PUBLISHED") {
+//     throw new Error("Results not published yet");
+//   }
+
+//   const studentMap = {};
+
+//   // Aggregate subject results per student
+//   exam.subjects.forEach((subject) => {
+//     subject.results.forEach((result) => {
+//       const studentId = result.studentId;
+
+//       if (!studentMap[studentId]) {
+//         studentMap[studentId] = {
+//           student: result.student,
+//           totalObtained: 0,
+//           totalMarks: 0,
+//           failed: false,
+//         };
+//       }
+
+//       studentMap[studentId].totalMarks += subject.totalMarks;
+
+//       const obtained = result.obtainedMarks || 0;
+//       studentMap[studentId].totalObtained += obtained;
+
+//       if (obtained < subject.passingMarks) {
+//         studentMap[studentId].failed = true;
+//       }
+//     });
+//   });
+
+//   let results = Object.values(studentMap).map((item) => {
+//     const percentage =
+//       item.totalMarks > 0
+//         ? (item.totalObtained / item.totalMarks) * 100
+//         : 0;
+
+//     const roundedPercentage = Number(percentage.toFixed(2));
+
+//     return {
+//       student: item.student,
+//       totalObtained: item.totalObtained,
+//       totalMarks: item.totalMarks,
+//       percentage: roundedPercentage,
+//       grade: calculateGrade(roundedPercentage),
+//       status: item.failed ? "FAIL" : "PASS",
+//     };
+//   });
+
+//   // Sort by percentage descending
+//   results.sort((a, b) => b.percentage - a.percentage);
+
+//   //  Assign rank (handles ties)
+//   let rank = 1;
+//   for (let i = 0; i < results.length; i++) {
+//     if (i > 0 && results[i].percentage < results[i - 1].percentage) {
+//       rank = i + 1;
+//     }
+//     results[i].rank = rank;
+//   }
+
+//   //  Class Statistics
+//   const totalStudents = results.length;
+//   const passCount = results.filter((r) => r.status === "PASS").length;
+//   const failCount = totalStudents - passCount;
+
+//   const average =
+//     totalStudents > 0
+//       ? (
+//           results.reduce((sum, r) => sum + r.percentage, 0) /
+//           totalStudents
+//         ).toFixed(2)
+//       : 0;
+
+//   const topper = results.length > 0 ? results[0] : null;
+
+//   return {
+//     examId,
+//     totalStudents,
+//     passCount,
+//     failCount,
+//     passPercentage:
+//       totalStudents > 0
+//         ? ((passCount / totalStudents) * 100).toFixed(2)
+//         : 0,
+//     average,
+//     topper,
+//     results,
+//   };
+// };
+
+
 export const getExamResultsOverview = async (examId) => {
   if (!examId) throw new Error("Exam ID required");
 
+  //  Check exam and status
   const exam = await client.exam.findUnique({
     where: { id: examId },
-    include: {
-      subjects: {
-        include: {
-          results: {
-            include: {
-              student: true,
-            },
-          },
-        },
-      },
+    select: {
+      id: true,
+      status: true,
     },
   });
 
   if (!exam) throw new Error("Exam not found");
 
-  // Only allow viewing after publish
   if (exam.status !== "PUBLISHED") {
     throw new Error("Results not published yet");
   }
 
-  const studentMap = {};
-
-  // Aggregate subject results per student
-  exam.subjects.forEach((subject) => {
-    subject.results.forEach((result) => {
-      const studentId = result.studentId;
-
-      if (!studentMap[studentId]) {
-        studentMap[studentId] = {
-          student: result.student,
-          totalObtained: 0,
-          totalMarks: 0,
-          failed: false,
-        };
-      }
-
-      studentMap[studentId].totalMarks += subject.totalMarks;
-
-      const obtained = result.obtainedMarks || 0;
-      studentMap[studentId].totalObtained += obtained;
-
-      if (obtained < subject.passingMarks) {
-        studentMap[studentId].failed = true;
-      }
-    });
+  //  Get exam subjects (for total marks + pass marks)
+  const examSubjects = await client.examSubject.findMany({
+    where: { examId },
+    select: {
+      id: true,
+      totalMarks: true,
+      passingMarks: true,
+    },
   });
 
-  let results = Object.values(studentMap).map((item) => {
+  const subjectIds = examSubjects.map((s) => s.id);
+
+  const totalExamMarks = examSubjects.reduce(
+    (sum, s) => sum + s.totalMarks,
+    0
+  );
+
+  //  Aggregate marks per student in database
+  const aggregated = await client.examResult.groupBy({
+    by: ["studentId"],
+    where: {
+      examSubjectId: { in: subjectIds },
+    },
+    _sum: {
+      obtainedMarks: true,
+    },
+  });
+
+  if (!aggregated.length) {
+    return {
+      examId,
+      totalStudents: 0,
+      results: [],
+    };
+  }
+
+  const studentIds = aggregated.map((a) => a.studentId);
+
+  //  Fetch student info
+  const students = await client.student.findMany({
+    where: { id: { in: studentIds } },
+    select: {
+      id: true,
+      studentName: true,
+      rollNumber: true,
+    },
+  });
+
+  const studentMap = new Map(
+    students.map((s) => [s.id, s])
+  );
+
+  //  Detect failed subjects
+  const failRecords = await client.examResult.findMany({
+    where: {
+      examSubjectId: { in: subjectIds },
+      obtainedMarks: {
+        not: null,
+      },
+    },
+    include: {
+      examSubject: {
+        select: {
+          passingMarks: true,
+        },
+      },
+    },
+  });
+
+  const failMap = {};
+
+  for (const r of failRecords) {
+    if (r.obtainedMarks < r.examSubject.passingMarks) {
+      failMap[r.studentId] = true;
+    }
+  }
+
+  //  Build results
+  let results = aggregated.map((row) => {
+    const student = studentMap.get(row.studentId);
+
+    const obtained = row._sum.obtainedMarks || 0;
+
     const percentage =
-      item.totalMarks > 0
-        ? (item.totalObtained / item.totalMarks) * 100
+      totalExamMarks > 0
+        ? (obtained / totalExamMarks) * 100
         : 0;
 
-    const roundedPercentage = Number(percentage.toFixed(2));
+    const roundedPercentage = Number(
+      percentage.toFixed(2)
+    );
+
+    const failed = failMap[row.studentId] || false;
 
     return {
-      student: item.student,
-      totalObtained: item.totalObtained,
-      totalMarks: item.totalMarks,
+      student,
+      totalObtained: obtained,
+      totalMarks: totalExamMarks,
       percentage: roundedPercentage,
       grade: calculateGrade(roundedPercentage),
-      status: item.failed ? "FAIL" : "PASS",
+      status: failed ? "FAIL" : "PASS",
     };
   });
 
-  // Sort by percentage descending
+  //  Sort by percentage
   results.sort((a, b) => b.percentage - a.percentage);
 
-  //  Assign rank (handles ties)
+  //  Ranking (tie-safe)
   let rank = 1;
   for (let i = 0; i < results.length; i++) {
     if (i > 0 && results[i].percentage < results[i - 1].percentage) {
@@ -525,7 +691,7 @@ export const getExamResultsOverview = async (examId) => {
     results[i].rank = rank;
   }
 
-  //  Class Statistics
+  //  Class statistics
   const totalStudents = results.length;
   const passCount = results.filter((r) => r.status === "PASS").length;
   const failCount = totalStudents - passCount;
@@ -554,6 +720,8 @@ export const getExamResultsOverview = async (examId) => {
     results,
   };
 };
+
+
 
 export const getStudentDetailedResult = async (
   examId,
@@ -631,6 +799,7 @@ export const getStudentDetailedResult = async (
     finalStatus: failed ? "FAIL" : "PASS",
   };
 };
+
 
 export const getStudentExamSummary = async (examId, studentId) => {
   if (!examId || !studentId) {

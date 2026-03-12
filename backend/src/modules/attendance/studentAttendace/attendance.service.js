@@ -1,14 +1,8 @@
 import { client } from "../../../prisma/db.js";
 import { formatISTDate, getISTStartOfDay } from "../../../utils/date.js";
 
-/**
- * MARK BULK ATTENDANCE
- */
-/**
- * AUTO PRESENT DEFAULT LOGIC
- */
 
-
+// mark attendance of class, default status is present
 export const markAttendance = async (body, teacherId) => {
 
   const { classId, date, exceptions = [] } = body;
@@ -17,12 +11,12 @@ export const markAttendance = async (body, teacherId) => {
     throw new Error("ClassId and date are required");
   }
 
-  /* ---------- IST SAFE DATE ---------- */
+  /*  Ist (indian time) */
 
   const attendanceDate = new Date(formatISTDate(date));
   console.log("attendace date from marke attendace", attendanceDate)
 
-  /* ---------- CLASS VALIDATION ---------- */
+
 
   const classData = await client.class.findFirst({
     where: {
@@ -35,7 +29,7 @@ export const markAttendance = async (body, teacherId) => {
       },
     },
   });
-
+console.log(classData)
   if (!classData) {
     throw new Error("Unauthorized or class not found");
   }
@@ -47,8 +41,7 @@ export const markAttendance = async (body, teacherId) => {
     throw new Error("No students found in class");
   }
 
-  /* ---------- VALIDATE EXCEPTIONS ---------- */
-
+  // validate expceptions
   const studentIds = new Set(students.map(s => s.id));
   const exceptionMap = new Map();
 
@@ -76,7 +69,6 @@ export const markAttendance = async (body, teacherId) => {
     status: exceptionMap.get(student.id) || "PRESENT"
   }));
 
-  /* ---------- TRANSACTION ---------- */
 
   try {
 
@@ -117,10 +109,7 @@ export const markAttendance = async (body, teacherId) => {
   }
 };
 
-
-/**
- * GET ATTENDANCE BY CLASS & DATE
- */
+// get attendace by date for teacher 
 export const getAttendanceByDate = async (classId, date) => {
 
   const attendanceDate = new Date(date);
@@ -183,6 +172,7 @@ export const getStudentAttendanceHistory = async (
   if (!student) {
     throw new Error("Student not found");
   }
+
   // Authorization check
   if (role === "teacher" && student.class?.teacherId !== userId) {
     throw new Error("Unauthorized");
@@ -206,13 +196,7 @@ export const getStudentAttendanceHistory = async (
   const attendanceRecords = await client.attendance.findMany({
     where: {
       studentId,
-      ...(startDate || endDate
-        ? {
-            session: {
-              date: dateFilter,
-            },
-          }
-        : {}),
+      ...(startDate || endDate ? { session: { date: dateFilter } } : {}),
     },
     select: {
     id: true,
@@ -267,10 +251,7 @@ export const getStudentAttendanceHistory = async (
   }
 
   const totalDays = attendanceRecords.length;
-  const attendancePercentage =
-    totalDays > 0
-      ? (((present + late) / totalDays) * 100)
-      : 0;
+  const attendancePercentage = totalDays > 0 ? (((present + late) / totalDays) * 100) : 0;
 
   return {
     message: "Attendance history fetched successfully",
@@ -293,9 +274,8 @@ export const getStudentAttendanceHistory = async (
   };
 };
 
-/**
- * UPDATE SINGLE RECORD
- */
+
+// update session for class
 export const updateAttendanceSession = async (
   sessionId,
   exceptions,

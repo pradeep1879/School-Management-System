@@ -179,37 +179,38 @@ model Exam {
 
 
 model ExamSubject {
-  id           String   @id @default(cuid())
+  id                String   @id @default(cuid())
 
-  examId       String
-  subjectId    String
+  examId            String
+  subjectId         String
 
-  totalMarks   Int
-  passingMarks Int
-  syllabus     String?  @default("complete syllbus")
+  totalMarks        Int
+  passingMarks      Int
+  syllabus          String?  @default("complete syllbus")
 
-  exam         Exam     @relation(fields: [examId], references: [id], onDelete: Cascade)
-  subject      Subject  @relation(fields: [subjectId], references: [id])
+  exam              Exam     @relation(fields: [examId], references: [id], onDelete: Cascade)
+  subject           Subject  @relation(fields: [subjectId], references: [id])
 
-  results      ExamResult[]
+  results           ExamResult[]
   @@unique([examId, subjectId])
 }
 
 
 model ExamResult {
-  id             String       @id @default(cuid())
+  id                  String       @id @default(cuid())
 
-  examSubjectId  String
-  studentId      String
-  obtainedMarks  Int?
+  examSubjectId       String
+  studentId           String
+  obtainedMarks       Int?
 
-  createdAt      DateTime     @default(now())
+  createdAt           DateTime     @default(now())
 
-  examSubject    ExamSubject  @relation(fields: [examSubjectId], references: [id], onDelete: Cascade)
-  student        Student      @relation(fields: [studentId], references: [id])
+  examSubject         ExamSubject  @relation(fields: [examSubjectId], references: [id], onDelete: Cascade)
+  student             Student      @relation(fields: [studentId], references: [id])
 
   @@unique([examSubjectId, studentId])
 }
+
 
 model Activity {
   id          String    @id @default(uuid())

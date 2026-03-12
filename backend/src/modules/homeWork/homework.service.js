@@ -32,8 +32,6 @@ export const createHomework = async (body, userId, role) => {
   };
 };
 
-
-
 export const getHomeworkByClass = async (classId) => {
   if (!classId) {
     throw new Error("Class ID required");

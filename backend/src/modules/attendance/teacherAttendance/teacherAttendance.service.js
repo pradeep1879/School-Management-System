@@ -2,10 +2,8 @@ import { client } from "../../../prisma/db.js";
 import { getISTDate, getISTNow, getISTStartOfDay } from "../../../utils/date.js";
 
 
-/**
- * TEACHER SUBMIT ATTENDANCE
- */
 
+// here teacher will submit the attendance 
 export const submitTeacherAttendance = async (body, teacherId) => {
 
   const { status, note } = body;
@@ -58,6 +56,101 @@ export const submitTeacherAttendance = async (body, teacherId) => {
 };
 
 
+// pending status for admin
+export const getPendingTeacherAttendance = async () => {
+  return client.teacherAttendance.findMany({
+    where: {
+      approvalStatus: "PENDING",
+    },
+    select: {
+      id: true,
+      status: true,
+      date: true,
+      note: true,
+      submittedAt: true,
+      teacher: {
+        select: {
+          id: true,
+          teacherName: true,
+          email: true,
+        },
+      },
+    },
+    orderBy: {
+      submittedAt: "desc",
+    },
+  });
+};
+
+
+
+// here admin will approve the status of attendance
+export const approveTeacherAttendance = async (attendanceId, adminId) => {
+
+  const attendance = await client.teacherAttendance.updateMany({
+    where: {
+      id: attendanceId,
+      approvalStatus: "PENDING"
+    },
+    data: {
+      approvalStatus: "APPROVED",
+      verifiedBy: adminId,
+      verifiedAt: getISTNow()
+    }
+  })
+  console.log("approve teacher attendace", getISTNow())
+  if (attendance.count === 0) {
+    throw new Error("Attendance not found or already processed")
+  }
+
+  return {
+    message: "Attendance approved successfully"
+  }
+}
+
+// admin can reject the status of attendance
+export const rejectTeacherAttendance = async (
+  attendanceId,
+  adminId,
+  reason
+) => {
+
+  const attendance = await client.teacherAttendance.updateMany({
+    where: {
+      id: attendanceId,
+      approvalStatus: "PENDING"
+    },
+    data: {
+      approvalStatus: "REJECTED",
+      verifiedBy: adminId,
+      verifiedAt: getISTNow(),
+      rejectionReason: reason
+    }
+  })
+
+  if (attendance.count === 0) {
+    throw new Error("Attendance not found or already processed")
+  }
+
+  return {
+    message: "Attendance rejected successfully"
+  }
+}
+
+// teacher attendance history for admin
+export const getTeacherAttendanceHistoryById = async (teacherId) => {
+  return client.teacherAttendance.findMany({
+    where: {
+      teacherId,
+    },
+    orderBy: {
+      date: "desc",
+    },
+    take: 50
+  });
+};;
+
+
 export const getTodayAttendance = async (teacherId) => {
 
   const today = new Date(getISTDate())
@@ -79,10 +172,8 @@ export const getTodayAttendance = async (teacherId) => {
     }
   })
 }
-/**
- * TEACHER GET OWN ATTENDANCE
- */
 
+// get teacher attendance
 export const getMyTeacherAttendance = async (teacherId) => {
   const attendance = await client.teacherAttendance.findMany({
     where: {
@@ -97,7 +188,7 @@ export const getMyTeacherAttendance = async (teacherId) => {
 };
 
 
-
+// get all teachers attendance history
 export const getAllTeacherAttendanceHistory = async () => {
   return client.teacherAttendance.findMany({
     include: {
@@ -182,106 +273,3 @@ export const getTeacherAttendanceStats = async () => {
   });
 
 };
-
-/**
- * ADMIN GET PENDING ATTENDANCE
- */
-
-export const getPendingTeacherAttendance = async () => {
-  return client.teacherAttendance.findMany({
-    where: {
-      approvalStatus: "PENDING",
-    },
-    select: {
-      id: true,
-      status: true,
-      date: true,
-      note: true,
-      submittedAt: true,
-      teacher: {
-        select: {
-          id: true,
-          teacherName: true,
-          email: true,
-        },
-      },
-    },
-    orderBy: {
-      submittedAt: "desc",
-    },
-  });
-};
-/**
- * ADMIN APPROVE ATTENDANCE
- */
-
-export const approveTeacherAttendance = async (attendanceId, adminId) => {
-
-  const attendance = await client.teacherAttendance.updateMany({
-    where: {
-      id: attendanceId,
-      approvalStatus: "PENDING"
-    },
-    data: {
-      approvalStatus: "APPROVED",
-      verifiedBy: adminId,
-      verifiedAt: getISTNow()
-    }
-  })
-  console.log("approve teacher attendace", getISTNow())
-  if (attendance.count === 0) {
-    throw new Error("Attendance not found or already processed")
-  }
-
-  return {
-    message: "Attendance approved successfully"
-  }
-}
-
-/**
- * ADMIN REJECT ATTENDANCE
- */
-
-export const rejectTeacherAttendance = async (
-  attendanceId,
-  adminId,
-  reason
-) => {
-
-  const attendance = await client.teacherAttendance.updateMany({
-    where: {
-      id: attendanceId,
-      approvalStatus: "PENDING"
-    },
-    data: {
-      approvalStatus: "REJECTED",
-      verifiedBy: adminId,
-      verifiedAt: getISTNow(),
-      rejectionReason: reason
-    }
-  })
-
-  if (attendance.count === 0) {
-    throw new Error("Attendance not found or already processed")
-  }
-
-  return {
-    message: "Attendance rejected successfully"
-  }
-}
-
-/**
- * ADMIN GET TEACHER ATTENDANCE HISTORY
- */
-
-export const getTeacherAttendanceHistoryById = async (teacherId) => {
-  return client.teacherAttendance.findMany({
-    where: {
-      teacherId,
-    },
-    orderBy: {
-      date: "desc",
-    },
-    take: 50
-  });
-};;

@@ -11,7 +11,7 @@ export const globalErrorHandler = (err, req, res, next) => {
 };
 
 // export const globalErrorHandler = (err, req, res, next) => {
-//   console.log("🔥 Global Error Middleware Hit");
+//   console.log(" Global Error Middleware Hit");
 //   console.error("ERROR:", err);
 
 //   const statusCode = err.statusCode || 500;

@@ -4,7 +4,7 @@ import { verifyUser } from "../../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
-/* ================= CREATE ================= */
+/* Create */
 
 // Admin + Teacher
 router.post(
@@ -13,7 +13,7 @@ router.post(
   examController.createExam
 );
 
-/* ================= FETCH ================= */
+/*  Fetch  */
 
 // Get exams by class
 router.get(

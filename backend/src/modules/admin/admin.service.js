@@ -42,16 +42,12 @@ export const login = async ({ email, password }) => {
   const isMatch = await bcrypt.compare(password, admin.password);
   if (!isMatch) throw new Error("Invalid credentials");
 
-  const token = jwt.sign(
-    { id: admin.id, role: "admin" },
-    config.JWT_SECRET,
-    { expiresIn: "1d" }
-  );
+  const token = jwt.sign({ id: admin.id, role: "admin" }, config.JWT_SECRET,{ expiresIn: "1d" });
 
   const { password: _, ...safeAdmin } = admin;
 
   return {
-    message: "Admin logged In",
+    message: "Admin logged in successfully",
     sucess:true,
     token,
     admin: safeAdmin,
