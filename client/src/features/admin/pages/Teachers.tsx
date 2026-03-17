@@ -72,7 +72,7 @@ const Teachers = () => {
 
 
       {activeTab === "all-teachers" && (
-       <TeachersTable page={1} limit={10} />
+       <TeachersTable  limit={10} />
       )}
 
       {activeTab === "attendance" && (
