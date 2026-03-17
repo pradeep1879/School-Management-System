@@ -1,5 +1,5 @@
 import { useAuthStore } from "@/store/auth.store"
-import { Navigate } from "react-router-dom"
+import { Navigate, useLocation } from "react-router-dom"
 
 interface Props {
   children: React.ReactNode
@@ -9,18 +9,29 @@ interface Props {
 const ProtectedRoute = ({ children, allowedRoles }: Props) => {
 
   const { token, role, hasHydrated } = useAuthStore()
+  const location = useLocation()
 
   if (!hasHydrated) {
     return null
   }
 
+  // Not logged in
   if (!token || !role) {
+
+    if (location.pathname.startsWith("/teacher")) {
+      return <Navigate to="/teacher/login" replace />
+    }
+
+    if (location.pathname.startsWith("/student")) {
+      return <Navigate to="/student/login" replace />
+    }
+
     return <Navigate to="/" replace />
   }
 
+  // Role not allowed
   if (!allowedRoles.includes(role)) {
 
-    // redirect user to their own dashboard
     if (role === "admin") return <Navigate to="/admin/dashboard" replace />
     if (role === "teacher") return <Navigate to="/teacher/dashboard" replace />
     if (role === "student") return <Navigate to="/student/dashboard" replace />

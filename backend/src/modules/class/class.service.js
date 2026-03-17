@@ -1,4 +1,6 @@
+
 import { client } from "../../prisma/db.js";
+import { buildUpdateData } from "../../utils/updateData.js";
 
 export const createClass = async (body, adminId) => {
   const { slug, section, session, teacherId } = body;
@@ -25,6 +27,85 @@ export const createClass = async (body, adminId) => {
   return {
     message: "Class created successfully",
     newClass,
+  };
+};
+
+export const updateClass = async(body, adminId, classId) =>{
+  if (!classId) {
+    return res.status(400).json({ message: "Class ID is required" });
+  }
+  const existingClass = await client.class.findFirst({
+    where:{
+      id: classId
+    },
+    select:{
+      id: true,
+      adminId: true,
+    }
+  });
+
+  if(!existingClass){
+    throw new Error("Class doesn't exits")
+  }
+
+  if(existingClass.adminId !== adminId){
+    throw new Error("Unauthorized");
+  }
+
+  const updateData = buildUpdateData(body);
+
+  if(updateData.teacherId){
+    const teacher = await client.teacher.findFirst({
+      where:{id: updateData.teacherId}
+    });
+
+    if(!teacher){
+      throw new Error("Invalid teacher")
+    }
+  }
+
+  const updatedClass = await client.class.update({
+    where: {id: classId},
+    data: updateData,
+  });
+
+  return {
+    success: true,
+    message: "Class updated successfully",
+    updatedClass
+  }
+}
+
+export const deleteClass = async (classId, adminId) => {
+  const existingClass = await client.class.findUnique({
+    where: { id: classId },
+    select: {
+      id: true,
+      adminId: true,
+    },
+  });
+
+  if (!existingClass) {
+    throw new Error("Class not found");
+  }
+
+  if (existingClass.adminId !== adminId) {
+    throw new Error("Unauthorized");
+  }
+
+
+  await client.$transaction([
+    client.student.deleteMany({
+      where: { classId },
+    }),
+
+    client.class.delete({
+      where: { id: classId },
+    }),
+  ]);
+
+  return {
+    message: "Class and its students deleted successfully",
   };
 };
 

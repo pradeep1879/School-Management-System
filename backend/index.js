@@ -2,6 +2,7 @@ console.log("hi there from index.js")
 import dotenv from "dotenv";
 dotenv.config();
 import express from 'express';
+import http from "http";
 import cors from 'cors';
 import cookieParser from "cookie-parser";
 import fileUpload from "express-fileupload";
@@ -25,8 +26,12 @@ import examAnalyticsRoutes from "./src/modules/analytics/exam/exm.ana.routes.js"
 import { globalErrorHandler } from "./src/middlewares/error.middleware.js";
 // import { startTeacherAttendanceCron } from "./src/modules/attendance/teacherAttendance/teacherAttendance.cron.js";
 
+import "./src/services/notification/notification.handler.js"
+import { startWebSocket } from "./src/services/ws/webSocketServer.js";
+
 
 const app = express();
+const server = http.createServer(app);
 app.use(cookieParser());
 app.use(express.json());
 app.use(cors({
@@ -43,9 +48,10 @@ app.use(
   })
 );
 
-app.get('/',(req,res) =>{
-    res.send('hi there')
+app.get('/health', (req,res) => {
+    res.json({status: "ok"})
 });
+
 // app.use('/api/v1/student', studentRoute)
 app.use("/api/v1/admin", adminRoutes);
 
@@ -69,8 +75,10 @@ app.use("/api/v1/analytics", analyticsRoutes);
 
 app.use(globalErrorHandler);
 
+startWebSocket(server)
+
 // startTeacherAttendanceCron();
-app.listen(process.env.PORT, () =>{
+server.listen(process.env.PORT, () =>{
   console.log(process.env.PORT);
 })
 

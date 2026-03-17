@@ -2,16 +2,16 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
 
-type Role = "admin" | "teacher" | "student" | null
+export type Role = "admin" | "teacher" | "student" | null
 
 interface AuthState {
-  token: string | null
+  token?: string | null
   role: Role
   userId: string | null
   hasHydrated: boolean
 
   setAuth: (data: {
-    token: string
+    token?: string
     role: Role
     userId: string
   }) => void

@@ -46,3 +46,17 @@ export const dashboard = async (req, res, next) => {
 };
 
 
+export const updateMyProfile = async (req, res, next) => {
+  try {
+    const data = await adminService.updateMyProfile(
+      req.userId,
+      req.body
+    );
+
+    res.status(200).json(data);
+  } catch (error) {
+    next(error);
+  }
+};
+
+

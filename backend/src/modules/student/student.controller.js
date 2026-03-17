@@ -24,6 +24,15 @@ export const loginStudent = async (req, res, next) => {
   }
 };
 
+export const logout = async (req, res, next) => {
+  try {
+    const data = await studentService.logout(req.userId);
+    res.status(200).json(data);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const getMyProfile = async (req, res, next) => {
   try {
     const data = await studentService.getMyProfile(

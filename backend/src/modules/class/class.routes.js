@@ -6,6 +6,8 @@ const router = express.Router();
 
 // Admin creates class
 router.post("/", verifyUser(["admin"]), classController.createClass);
+router.patch("/:classId", verifyUser(["admin"]), classController.updateClass);
+router.delete("/:classId", verifyUser(["admin"]),classController.deleteClass);
 
 // Get all classes (admin)
 router.get("/", verifyUser(["admin"]), classController.getAllClasses);

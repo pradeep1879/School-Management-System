@@ -7,8 +7,10 @@ export const adminLogin = (data: any) =>
 export const getDashboard = () =>
   api.get("/admin/dashboard");
 
-export const getProfile = () =>
-  api.get("/admin/profile");
+export const getProfile = async () => {
+  const res = await api.get("/admin/profile");
+  return res.data;
+}
 
 export const getDashboardAnalytics = async (): Promise<DashboardAnalytics> => {
   const res = await api.get("/analytics");
@@ -20,6 +22,15 @@ export const adminLogout = async () => {
   return res.data;
 };
 
+export const updateAdminProfile = (data: {
+  email?: string
+  oldPasswrod?: string;
+  password?: string
+  confirmPassword?: string
+}) => {
+  return api.patch("/admin/profile", data)
+}
+
 
 export const getDailyAttendance = async (
   days: number = 7
@@ -29,4 +40,6 @@ export const getDailyAttendance = async (
 
   return res.data.data
 }
+
+
 

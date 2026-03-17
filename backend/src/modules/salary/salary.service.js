@@ -1,9 +1,7 @@
 import { client } from "../../prisma/db.js";
 
-/**
- * GENERATE PAYROLL (Optimized)
- */
 
+// generate payroll
 export const generateMonthlyPayroll = async (body, adminId) => {
   const { month, year } = body;
 
@@ -126,8 +124,6 @@ export const getAllTeacherSalaries = async () => {
     },
   });
 };
-
-
 
 
 export const payTeacherSalary = async (salaryId, body) => {

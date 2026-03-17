@@ -102,7 +102,6 @@ export const teacherLogin = async ({ email, password }) => {
   if (!email || !password) {
     throw new Error("Email and password required");
   }
-console.log(email, password)
   const teacher = await client.teacher.findUnique({
     where: { email },
   });
@@ -142,6 +141,7 @@ export const logout = async (adminId) => {
 
 
 export const getAllTeachers = async (query) => {
+
   const page = parseInt(query.page) || 1;
   const limit = parseInt(query.limit) || 10;
 
@@ -304,3 +304,70 @@ export const getTeacherProfile = async (teacherId) => {
     teacher,
   };
 };
+
+
+export const updateMyProfile = async (teacherId, body) =>{
+  const { email, oldPassword, password, confirmPassword } = body;
+
+  const teacher = await client.teacher.findUnique({
+      where: { id: teacherId },
+    });
+  
+    if (!teacher) {
+      throw new Error("User not found");
+    }
+  
+    const updateData = {};
+  
+    // Update username
+    if (email) {
+      const existing = await client.teacher.findUnique({
+        where: { email },
+      });
+  
+      if (existing && existing.id !== teacherId) {
+        throw new Error("Username already taken");
+      }
+  
+      updateData.email = email;
+    }
+  
+    // Update password
+    if (oldPassword ||password || confirmPassword) {
+      if (!password || !confirmPassword || !oldPassword) {
+        throw new Error("Password and confirm password required");
+      }
+      
+      if( oldPassword !== teacher.password){
+        throw new Error("Old passwrod is incorrect")
+      }
+
+      if (password !== confirmPassword) {
+        throw new Error("Passwords do not match");
+      }
+  
+      if (password.length < 6) {
+        throw new Error("Password must be at least 6 characters");
+      }
+  
+      const hashedPassword = await bcrypt.hash(password, 10);
+  
+      updateData.password = hashedPassword;
+    }
+  
+    if (Object.keys(updateData).length === 0) {
+      throw new Error("Nothing to update");
+    }
+  
+    const updatedTeacher = await client.teacher.update({
+      where: { id: teacherId },
+      data: updateData,
+    });
+  
+    const { password: _, ...safeTeacher } = updatedTeacher;
+  
+    return {
+      message: "Profile updated successfully",
+      student: safeTeacher,
+    };
+}

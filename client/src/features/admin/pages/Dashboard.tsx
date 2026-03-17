@@ -16,12 +16,8 @@ const AdminDashboard = () => {
         </p>
       </div>
 
-      
-
-      {/* ================= CONTENT ================= */}
-
-      {/* KPI CARDS  */}
-
+    {/* Analytics */}
+    
       <AdminAnalystics/>
 
       

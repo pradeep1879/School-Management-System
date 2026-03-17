@@ -14,7 +14,7 @@ export const markAttendance = async (body, teacherId) => {
   /*  Ist (indian time) */
 
   const attendanceDate = new Date(formatISTDate(date));
-  console.log("attendace date from marke attendace", attendanceDate)
+
 
 
 
@@ -29,7 +29,7 @@ export const markAttendance = async (body, teacherId) => {
       },
     },
   });
-console.log(classData)
+
   if (!classData) {
     throw new Error("Unauthorized or class not found");
   }

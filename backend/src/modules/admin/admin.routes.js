@@ -25,5 +25,7 @@ router.get("/dashboard", verifyUser(["admin"]), adminController.dashboard);
 // Admin profile (optional but recommended)
 router.get("/profile", verifyUser(["admin"]), adminController.getProfile);
 
+router.patch("/profile", verifyUser(["admin"]), adminController.updateMyProfile);
+
 
 export default router;

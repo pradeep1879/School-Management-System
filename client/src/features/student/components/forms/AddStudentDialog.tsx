@@ -62,7 +62,7 @@ const AddStudentDialog = ({ setOpen }: Props) => {
   }
 
   return (
-    <DialogContent className="max-w-3xl max-h-[90vh]  overflow-y-auto custom-scrollbar">
+    <DialogContent className="max-w-3xl max-h-[60vh]  overflow-y-auto custom-scrollbar">
 
       <DialogHeader>
         <DialogTitle className="text-lg font-semibold">

@@ -3,7 +3,7 @@ import { client } from "../../prisma/db.js";
 export const generateInstallments = async (
   structureId
 ) => {
-  // 🔥 Fetch exact structure
+  //  Fetch exact structure
   console.log("genereateInstallments", structureId);
   const structure =
     await client.feeStructure.findUnique({
@@ -22,7 +22,7 @@ export const generateInstallments = async (
       "No fee components found for this structure"
     );
 
-  // 🔥 Get students of that structure's class
+  //  Get students of that structure's class
   const students =
     await client.student.findMany({
       where: {
@@ -40,7 +40,7 @@ export const generateInstallments = async (
   for (const student of students) {
     for (const component of structure.components) {
 
-      // ================= MONTHLY =================
+      //  monthly
       if (component.frequency === "MONTHLY") {
         for (let month = 1; month <= 12; month++) {
 
@@ -69,7 +69,7 @@ export const generateInstallments = async (
         }
       }
 
-      // ================= YEARLY / ONE_TIME =================
+      //  yearly / monthly
       else {
         const existing =
           await client.studentFeeInstallment.findFirst({
@@ -89,7 +89,7 @@ export const generateInstallments = async (
             feeComponentId: component.id,
             year: currentYear,
             totalAmount: component.amount,
-            dueDate: new Date(currentYear, 3, 10),
+            dueDate: new Date(currentYear, 2, 20),
           },
         });
       }
@@ -97,6 +97,7 @@ export const generateInstallments = async (
   }
 
   return {
+    success: true,
     message: "Installments generated successfully",
   };
 };

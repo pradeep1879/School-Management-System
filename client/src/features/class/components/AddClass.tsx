@@ -2,7 +2,6 @@ import { useForm } from "react-hook-form";
 import { Loader2 } from "lucide-react";
 import { useCreateClass } from "../hooks/useCreateClass";
 
-
 import { Button } from "@/components/ui/button";
 import {
   DialogContent,
@@ -37,8 +36,13 @@ interface ClassFormData {
 }
 
 const AddClass = ({ setOpen }: AddClassProps) => {
-  const { register, handleSubmit, reset, setValue, formState: { errors } } =
-    useForm<ClassFormData>();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    formState: { errors },
+  } = useForm<ClassFormData>();
 
   const { mutate, isPending } = useCreateClass();
   const { data: teachersData } = useTeachers(1, 100);
@@ -59,9 +63,7 @@ const AddClass = ({ setOpen }: AddClassProps) => {
       </DialogHeader>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-
         <FieldGroup>
-
           {/* Class Name */}
           <Field>
             <FieldLabel>Class Name</FieldLabel>
@@ -104,9 +106,7 @@ const AddClass = ({ setOpen }: AddClassProps) => {
             <FieldLabel>Assign Teacher</FieldLabel>
 
             <Select
-              onValueChange={(value) =>
-                setValue("teacherId", value)
-              }
+              onValueChange={(value) => setValue("teacherId", value)}
               disabled={isPending}
             >
               <SelectTrigger>
@@ -115,19 +115,14 @@ const AddClass = ({ setOpen }: AddClassProps) => {
 
               <SelectContent>
                 {teachersData?.teachers?.map((teacher: any) => (
-                  <SelectItem
-                    key={teacher.id}
-                    value={teacher.id}
-                  >
+                  <SelectItem key={teacher.id} value={teacher.id}>
                     {teacher.teacherName}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
 
-            <FieldDescription>
-              Optional: You can assign later
-            </FieldDescription>
+            <FieldDescription>Optional: You can assign later</FieldDescription>
           </Field>
 
           {/* Buttons */}
@@ -146,13 +141,10 @@ const AddClass = ({ setOpen }: AddClassProps) => {
               disabled={isPending}
               className="flex items-center gap-2"
             >
-              {isPending && (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              )}
+              {isPending && <Loader2 className="h-4 w-4 animate-spin" />}
               {isPending ? "Creating" : "Create Class"}
             </Button>
           </Field>
-
         </FieldGroup>
       </form>
     </DialogContent>

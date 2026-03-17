@@ -140,6 +140,13 @@ export const loginStudent = async ({ userName, password }) => {
   };
 };
 
+export const logout = async() => {
+  return {
+    success: true,
+    message: "Teacher logged out successfully",
+  };
+}
+
 export const getMyProfile = async (studentId) => {
   const student = await client.student.findUnique({
     where: { id: studentId },

@@ -17,4 +17,6 @@ router.get("/", verifyUser(["admin","teacher"]), teacherController.getAllTeacher
 router.get("/class",  verifyUser(["teacher"]), teacherController.getTeacherClass);
 router.get("/:id", verifyUser(["admin"]), teacherController.getTeacherById);
 
+router.patch("/profile", verifyUser(["teacher"]), teacherController.updateMyProfile);
+
 export default router;

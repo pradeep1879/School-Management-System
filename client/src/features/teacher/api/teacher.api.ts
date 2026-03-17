@@ -7,7 +7,7 @@ export const createTeacher = async (data: FormData) => {
 };
 
 export const teacherLogin = async (data: {
-  email: string;
+  email?: string;
   password: string;
 }) => {
   const res = await api.post("/teacher/login", data);
@@ -38,3 +38,12 @@ export const getTeacherProfile = async () => {
   const res = await api.get("/teacher/profile");
   return res.data;
 };
+
+export const updateTeacherProfile = (data: {
+  email?: string
+  oldPasswrod?: string;
+  password?: string
+  confirmPassword?: string
+}) => {
+  return api.patch("/teacher/profile", data)
+}

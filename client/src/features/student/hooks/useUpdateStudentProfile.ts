@@ -43,7 +43,7 @@ export const useUpdatePassword = () => {
     },
 
     onError: (err:any) => {
-      toast.error(err?.response?.data?.message ||"Failed to change password")
+      toast.error(err?.response?.data?.message || "Failed to change password")
     }
 
   })

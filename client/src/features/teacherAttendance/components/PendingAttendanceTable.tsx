@@ -21,7 +21,7 @@ import { useRejectAttendance } from "../hooks/useRejectAttendance";
 
 export default function PendingAttendanceTable() {
   const { data, isLoading } = usePendingTeacherAttendance();
-  console.log(data)
+  console.log("peinding",data)
   const approve = useApproveAttendance();
   const reject = useRejectAttendance();
 

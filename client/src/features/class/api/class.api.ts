@@ -9,6 +9,20 @@ export const createClass = async (data: {
   return res.data;
 };
 
+export const updateClass = async (data: {
+  slug?: string;
+  section?: string;
+  session?: string;
+}, classId: string) => {
+  const res = await api.patch(`/classes/${classId}`, data);
+  return res.data;
+}
+
+export const deleteClass = async (classId: string) => {
+  const res = await api.delete(`/classes/${classId}`)
+  return res.data;
+}
+
 export const getAllClasses = (params?: {
   page?: number;
   limit?: number;

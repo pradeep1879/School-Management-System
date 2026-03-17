@@ -22,6 +22,8 @@ export const loginTeacher = async (req, res, next) => {
     next(error);
   }
 };
+
+
 export const logout = async (req, res, next) => {
   try {
     const data = await teacherService.logout(req.userId);
@@ -64,6 +66,20 @@ export const getTeacherClass = async (req, res, next) => {
 export const getProfile = async (req, res, next) => {
   try {
     const data = await teacherService.getTeacherProfile(req.userId);
+    res.status(200).json(data);
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+export const updateMyProfile = async (req, res, next) => {
+  try {
+    const data = await teacherService.updateMyProfile(
+      req.userId,
+      req.body
+    );
+
     res.status(200).json(data);
   } catch (error) {
     next(error);

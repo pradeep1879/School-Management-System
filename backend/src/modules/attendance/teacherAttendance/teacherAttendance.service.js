@@ -66,6 +66,7 @@ export const getPendingTeacherAttendance = async () => {
       id: true,
       status: true,
       date: true,
+      approvalStatus: true,
       note: true,
       submittedAt: true,
       teacher: {
@@ -98,7 +99,7 @@ export const approveTeacherAttendance = async (attendanceId, adminId) => {
       verifiedAt: getISTNow()
     }
   })
-  console.log("approve teacher attendace", getISTNow())
+
   if (attendance.count === 0) {
     throw new Error("Attendance not found or already processed")
   }
@@ -154,7 +155,7 @@ export const getTeacherAttendanceHistoryById = async (teacherId) => {
 export const getTodayAttendance = async (teacherId) => {
 
   const today = new Date(getISTDate())
-  console.log("get today attendance", today)
+
 
   return client.teacherAttendance.findUnique({
     where: {

@@ -4,6 +4,11 @@ export const createStudent = (data: FormData) => {
   return api.post("/students", data);
 };
 
+export const studentLogout = async () => {
+  const res = await api.post("/students/logout");
+  return res.data;
+};
+
 
 export interface StudentLoginPayload {
   userName: string;

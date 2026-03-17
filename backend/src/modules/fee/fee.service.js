@@ -2,11 +2,14 @@ import { client } from "../../prisma/db.js";
 import { generateInstallments } from "./fee.installment.generator.js";
 import { calculateLateFee } from "./fee.utils.js";
 
-/* ================= CREATE STRUCTURE ================= */
 
-export const createFeeStructure = async (body) => {
+// create structure, this is only for admin
+export const createFeeStructure = async (body, role) => {
   const { classId, session, lateFeeType, lateFeeAmount } = body;
 
+  if(role !== "admin"){
+    throw new Error("Unauthorized")
+  }
   const structure = await client.feeStructure.create({
     data: {
       classId,
@@ -22,8 +25,7 @@ export const createFeeStructure = async (body) => {
   };
 };
 
-/* ================= ADD COMPONENT ================= */
-
+// add component , this also for admin
 export const addFeeComponent = async (body) => {
   const {
     feeStructureId,
@@ -45,21 +47,21 @@ export const addFeeComponent = async (body) => {
     });
 
   return {
-    message: "Component added",
+    message: "Component added successfully",
     component,
   };
 };
 
-/* ================= GENERATE INSTALLMENTS ================= */
 
+// generate installments, admin
 export const generateInstallmentsForStructure = async (
   structureId
 ) => {
   return await generateInstallments(structureId);
 };
 
-/* ================= COLLECT PAYMENT ================= */
 
+// collect payment per student
 export const collectPayment = async (body, adminId) => {
   const { installmentId, amountPaid, paymentMethod } = body;
 
@@ -134,8 +136,8 @@ export const collectPayment = async (body, adminId) => {
   };
 };
 
-/* ================= STUDENT SUMMARY ================= */
 
+// student fee summary
 export const getStudentFeeSummary = async (studentId) => {
 
   const isStudentExist = await client.student.findFirst({
@@ -145,7 +147,6 @@ export const getStudentFeeSummary = async (studentId) => {
   })
   if(!isStudentExist){
     throw new Error("Student does not exist")
-    return;
   }
 
   const installments = await client.studentFeeInstallment.findMany({
@@ -193,8 +194,8 @@ export const getStudentFeeSummary = async (studentId) => {
   };
 };
 
-/* ================= CLASS SUMMARY ================= */
 
+// fee summary for class
 export const getClassFeeSummary = async (classId) => {
   const students = await client.student.findMany({
     where: { classId },
@@ -264,6 +265,7 @@ export const getClassFeeSummary = async (classId) => {
   };
 };
 
+// this is for admin finance dashboard
 export const getAdminFinanceSummary = async () => {
   const totalInstallments = await client.studentFeeInstallment.aggregate({
     _sum: { totalAmount: true },
@@ -365,16 +367,15 @@ export const getAdminFinanceSummary = async () => {
       });
     }
 
-    overdueMap.get(key).dueAmount +=
-      inst.totalAmount - inst.paidAmount;
+    overdueMap.get(key).dueAmount += inst.totalAmount - inst.paidAmount;
   });
 
   return {
     totalRevenue: totalInstallments._sum.totalAmount || 0,
     totalCollected: totalPaid._sum.paidAmount || 0,
     totalDue:
-      (totalInstallments._sum.totalAmount || 0) -
-      (totalPaid._sum.paidAmount || 0),
+      (totalInstallments._sum.totalAmount || 0) - (totalPaid._sum.paidAmount || 0),
+      
     todayCollection: todayPayments._sum.amountPaid || 0,
     totalStudents,
     overdueStudents: overdueCount,

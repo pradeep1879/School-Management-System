@@ -60,6 +60,12 @@ import TeacherAttendanceStatsPageFT from '@/features/teacherAttendance/pages/Tea
 import MyAttendanceTable from '@/features/teacherAttendance/components/myAttendanceTable';
 import AdminSalaryPage from '@/finance/salary/pages/AdminSalaryPage';
 import PublicRoute from './PublicRoutes';
+import NotFound from '@/components/extra-components/PageNotFound';
+import StudentNotificationPage from '@/features/notification/pages/NotificationPage';
+import TeacherProfileSetting from '@/features/teacher/pages/auth/TeacherProfileSetting';
+import AdminProfileSetting from '@/features/admin/pages/auth/AdminProfileSetting';
+
+
 
 
 // import ClassActivitiesSection from '@/features/class/components/ClassActivities';
@@ -68,26 +74,15 @@ const AppRoutes = () =>{
   return (
     <Routes>
       {/* Admin */}
-        <Route path="/" element={
-            <PublicRoute>
-              <AdminLogin/>
-            </PublicRoute>
-          }/>
+        <Route path="*" element={<NotFound />} />
+        <Route path="/" element={<PublicRoute><AdminLogin/></PublicRoute>}/>
+        <Route path="/teacher/login" element={<PublicRoute><TeacherLogin/></PublicRoute>}/>
+        <Route path="/student/login" element={<PublicRoute><StudentLogin/></PublicRoute>}/>
 
-          <Route path="/teacher/login" element={
-            <PublicRoute>
-              <TeacherLogin/>
-            </PublicRoute>
-          }/>
 
-          <Route path="/student/login" element={
-            <PublicRoute>
-              <StudentLogin/>
-            </PublicRoute>
-          }/>
 
        <Route path="/admin" 
-        element={<ProtectedRoute allowedRoles={["admin"]}>  <AdminLayout /> </ProtectedRoute>}>
+            element={<ProtectedRoute allowedRoles={["admin"]}><AdminLayout /></ProtectedRoute>}>
           
         <Route path="dashboard" element={<AdminDashboard />} />
         <Route path="teachers" element={<Teachers />} />
@@ -116,14 +111,15 @@ const AppRoutes = () =>{
         <Route path="finance/dashboard" element={<AdminFeeDashboard />} />
         <Route path="finance/collect" element={<CollectFeePage />} />
         <Route path="finance/setup" element={<AdminFeeSetupPage />} />
+        <Route path="setting" element={<AdminProfileSetting />} />
        </Route>
 
         {/* <Route path="classes" element={<Classes />} />  */}
 
 
 
-    <Route  path="/teacher" element={<ProtectedRoute allowedRoles={["teacher"]}><TeacherLayout />
-      </ProtectedRoute>}>
+    <Route  path="/teacher" 
+        element={<ProtectedRoute allowedRoles={["teacher"]}><TeacherLayout /></ProtectedRoute>}>
 
         {/* ================= DASHBOARD ================= */}
         <Route path="dashboard" element={<TeacherDashboard />} />
@@ -153,15 +149,15 @@ const AppRoutes = () =>{
         {/* ================= OTHERS ================= */}
         <Route path="time-table" element={<SchoolDailySchedulePage />} />
         <Route path="calendar" element={<SchoolCalendar />} />
+        <Route path="setting" element={<TeacherProfileSetting />} />
       </Route>
           
 
         {/* STUDENTS ROUTES */}
         
-      <Route  path="/student" element={<ProtectedRoute allowedRoles={["student"]}>
-              <StudentLayout />
-            </ProtectedRoute>
-        }>
+      <Route  path="/student"
+           element={<ProtectedRoute allowedRoles={["student"]}><StudentLayout /></ProtectedRoute>}>
+
            <Route path="dashboard" element={<StudentDashboard />} />
            <Route path="activities" element={<StudentActivityPage />} />
            <Route path="attendance" element={ <StudentAttendancePage />}/>
@@ -171,6 +167,7 @@ const AppRoutes = () =>{
            <Route path="exam/:examId" element={<StudentResultPage />} />
            <Route  path="subjects/:subjectId/syllabus"  element={<SyllabusPage />}/>
            <Route  path="fee"  element={<MyFeePage />}/>
+           <Route  path="notification"  element={<StudentNotificationPage />}/>
            <Route  path="setting"  element={<StudentProfileSettings />}/>
 
           

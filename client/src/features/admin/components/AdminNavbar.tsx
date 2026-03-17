@@ -11,16 +11,19 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { Bell, MessageCircle, LogOut } from "lucide-react";
-
+import { LogOut } from "lucide-react";
 
 import { useAuthStore } from "@/store/auth.store";
 import { useNavigate } from "react-router-dom";
 import { adminLogout } from "../api/admin.api";
+import { useAdminProfile } from "../hooks/useAdminProfile";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const AdminNavbar = () => {
   const navigate = useNavigate();
   const logoutStore = useAuthStore((state) => state.logout);
+  const { data } = useAdminProfile();
+  const admin = data?.admin;
 
   const handleLogout = async () => {
     try {
@@ -37,8 +40,7 @@ const AdminNavbar = () => {
   };
 
   return (
-    <div className="h-16 sticky top-0 z-50 bg-background border-b flex items-center justify-between">
-
+    <div className="h-16 px-4 sticky top-0 z-50 bg-background border-b flex items-center justify-between">
       {/* Sidebar Toggle */}
       <SidebarTrigger
         variant="link"
@@ -47,40 +49,29 @@ const AdminNavbar = () => {
 
       {/* Navbar Right */}
       <div className="flex items-center space-x-10">
-
         {/* Icons */}
         <div className="flex items-center gap-3">
-          <div className="relative">
-            <div className="absolute text-center -top-3 -right-1 bg-accent-foreground w-5 h-5 rounded-full text-muted-foreground">
-              9
-            </div>
-            <Bell />
-          </div>
-
-          <MessageCircle />
-
           <ModeToggle />
         </div>
 
         {/* Profile */}
         <div className="flex items-center gap-2">
-          <div>
-            <p className="text-foreground font-semibold">Admin User</p>
-            <p className="text-muted-foreground text-sm">Administrator</p>
-          </div>
-
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button
-                variant="outline"
-                className="px-1 rounded-full h-12 w-12"
-              >
-                <img src="/vite.svg" alt="" className="w-8 h-8" />
+              <Button variant="outline" className="px-1 rounded-full h-12 w-12">
+                <Avatar className="h-12 w-12">
+                  <AvatarImage src={admin?.imageUrl} />
+                  <AvatarFallback className="text-xl font-bold">
+                    {admin?.name
+                      ?.split(" ")
+                      .map((word: string) => word.charAt(0).toUpperCase())
+                      .join("")}
+                  </AvatarFallback>
+                </Avatar>
               </Button>
             </DropdownMenuTrigger>
 
             <DropdownMenuContent align="end">
-
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
 
               <DropdownMenuGroup>
@@ -105,10 +96,12 @@ const AdminNavbar = () => {
                 <LogOut className="mr-2 h-4 w-4" />
                 Logout
               </DropdownMenuItem>
-
             </DropdownMenuContent>
           </DropdownMenu>
-
+          <div>
+            <p className="text-foreground font-semibold">{admin?.name}</p>
+            <p className="text-muted-foreground text-sm">{admin?.email}</p>
+          </div>
         </div>
       </div>
     </div>

@@ -243,7 +243,7 @@ export default function MarkAttendanceDialog({
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="max-w-5xl w-[95vw] max-h-[90vh] overflow-hidden flex flex-col">
+      <DialogContent className="max-w-5xl w-[95vw] max-h-[90vh]  overflow-hidden flex flex-col">
 
         {/* HEADER */}
         <DialogHeader>

@@ -14,8 +14,6 @@ RUN rm -rf node_modules/.cache
 RUN npm run build
 
 
-RUN npm run build
-
 RUN npm install -g serve
 
 EXPOSE 5173

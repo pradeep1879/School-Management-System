@@ -4,13 +4,14 @@ import {
   BookOpenCheckIcon,
   Calendar1Icon,
   CalendarDays,
-  ChevronUp,
   HandCoins,
   LayoutDashboardIcon,
+  LogOut,
   School2,
+  Settings,
   Settings2,
+  ShieldCheck,
   User,
-  User2,
   Users,
 
 } from "lucide-react"
@@ -28,18 +29,14 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarSeparator,
   useSidebar,
 } from "../../../components/ui/sidebar"
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "../../../components/ui/dropdown-menu"
+  
 
 import { cn } from "@/lib/utils"
+import { Separator } from "@/components/ui/separator"
+import { Button } from "@/components/ui/button"
 
 const applicationItems = [
   { title: "Dashboard", url: "/admin/dashboard", icon: LayoutDashboardIcon },
@@ -57,6 +54,10 @@ const financeItems = [
   { title: "Salary", url: "/admin/finance/salary", icon: Banknote },
   { title: "Setup", url: "/admin/finance/setup", icon: Settings2 },
 ];
+
+const accountItems = [
+  { title: "Setting", url: "/admin/setting", icon: Settings },
+]
 
 const AdminSidebar = () => {
   const { setOpenMobile } = useSidebar()
@@ -109,21 +110,32 @@ const AdminSidebar = () => {
 
   return (
     <Sidebar collapsible="icon" className="border-r bg-background">
-      {/* ================= HEADER ================= */}
+      {/* ----------- HEADER ----------- */}
       <SidebarHeader className="py-4">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
-              <Link to="/" className="flex items-center gap-2 font-semibold">
-                <img src="/vite.svg" alt="logo" width={20} />
-                <span>New Dev</span>
+              <Link to="/" className="flex items-center gap-3">
+  
+                {/* Logo Icon */}
+                <div className="flex items-center justify-center w-12 h-12 rounded-xl
+                 bg-linear-to-br from-blue-500 to-purple-600">
+                  <ShieldCheck className="w-6 h-6 text-white" />
+                </div>
+
+                {/* Text */}
+                <div className="flex flex-col leading-tight">
+                  <span className="text-lg font-bold bg-linear-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
+                    Admin Panel
+                  </span>
+                </div>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
 
-      <SidebarSeparator />
+      <Separator/>
 
       {/* ================= CONTENT ================= */}
       <SidebarContent>
@@ -142,30 +154,34 @@ const AdminSidebar = () => {
             <SidebarMenu>{renderMenuItems(financeItems)}</SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
+       <SidebarGroup>
+          <SidebarGroupLabel>Account</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>{renderMenuItems(accountItems)}</SidebarMenu>
+          </SidebarGroupContent>
+       </SidebarGroup>
       </SidebarContent>
 
-      {/* ================= FOOTER ================= */}
-      <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <SidebarMenuButton className="hover:bg-muted/60 transition">
-                  <User2 />
-                  John Doe
-                  <ChevronUp className="ml-auto h-4 w-4" />
-                </SidebarMenuButton>
-              </DropdownMenuTrigger>
 
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem>Account</DropdownMenuItem>
-                <DropdownMenuItem>Setting</DropdownMenuItem>
-                <DropdownMenuItem>Sign out</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
+      <div className="border-b mx-3"/>
+
+      {/* ---------- FOOTER ---------- */}
+    <SidebarFooter>
+      <SidebarMenu>
+        <SidebarMenuItem>
+          <SidebarMenuButton
+            asChild
+            className="text-red-500 hover:bg-red-50 hover:text-red-600"
+          >
+            <Button variant="destructive">
+              <LogOut className="w-6 h-6 text-red-200" />
+              <span className="text-primary">Logout</span>
+            </Button>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      </SidebarMenu>
+    </SidebarFooter>
     </Sidebar>
   )
 }

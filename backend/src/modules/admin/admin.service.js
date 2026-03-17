@@ -68,7 +68,6 @@ export const getProfile = async (adminId) => {
       id: true,
       name: true,
       email: true,
-      createdAt: true,
     },
   });
 
@@ -112,6 +111,73 @@ export const getDashboardData = async (adminId) => {
     },
   };
 };
+
+
+export const updateMyProfile = async (adminId, body) =>{
+  const { email, oldPassword, password, confirmPassword } = body;
+  
+  const admin = await client.admin.findUnique({
+      where: { id: adminId },
+    });
+  
+    if (!admin) {
+      throw new Error("User not found");
+    }
+  
+    const updateData = {};
+  
+    // Update email
+    if (email) {
+      const existing = await client.admin.findUnique({
+        where: { email },
+      });
+  
+      if (existing && existing.id !== adminId) {
+        throw new Error("Username already taken");
+      }
+  
+      updateData.email = email;
+    }
+  
+    // Update password
+    if (oldPassword ||password || confirmPassword) {
+      if (!password || !confirmPassword || !oldPassword) {
+        throw new Error("Password and confirm password required");
+      }
+      
+      if( oldPassword !== admin.password){
+        throw new Error("Old passwrod is incorrect")
+      }
+
+      if (password !== confirmPassword) {
+        throw new Error("Passwords do not match");
+      }
+  
+      if (password.length < 6) {
+        throw new Error("Password must be at least 6 characters");
+      }
+  
+      const hashedPassword = await bcrypt.hash(password, 10);
+  
+      updateData.password = hashedPassword;
+    }
+  
+    if (Object.keys(updateData).length === 0) {
+      throw new Error("Nothing to update");
+    }
+  
+    const updatedAdmin = await client.admin.update({
+      where: { id: teacherId },
+      data: updateData,
+    });
+    const { password: _, ...safeAdmin } = updatedAdmin;
+    
+    
+    return {
+      message: "Profile updated successfully",
+      admin: safeAdmin,
+    };
+}
 
 
 

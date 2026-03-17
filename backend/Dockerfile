@@ -9,7 +9,7 @@ RUN npm install --ignore-scripts
 
 COPY . .
 
-# now schema exists, generate prisma client
+# generate prisma client
 RUN npx prisma generate --schema=./src/prisma/schema.prisma
 
 EXPOSE 3000

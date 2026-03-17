@@ -10,9 +10,16 @@ import {
   GraduationCap,
   User,
 } from "lucide-react"
+import { Dialog, DialogTrigger } from "@/components/ui/dialog"
+import UpdateClass from "./UpdateClass"
+import { useState } from "react"
+import DeleteClassDialog from "./DeleteClassDialog"
+
+import { useDeleteClass } from "../hooks/useDeleteClass"
 
 interface ClassCardProps {
   className: string
+  classId: string,
   section: string
   classTeacher: string
   students?: number
@@ -23,13 +30,17 @@ interface ClassCardProps {
 
 const ClassCard = ({
   className,
+  classId,
   section,
   classTeacher,
   students,
-  onUpdate,
-  onDelete,
   onView,
 }: ClassCardProps) => {
+
+  const [updateOpen, setUpdateOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const { mutateAsync: handleDeleteClass, isPending }  = useDeleteClass();
+
   return (
     <Card className="group relative overflow-hidden border border-border/50 bg-linear-to-br from-background to-muted/30 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
       
@@ -100,25 +111,43 @@ const ClassCard = ({
             View
           </Button>
 
-          <Button
-            size="sm"
-            variant="secondary"
-            className="flex-1 gap-2"
-            onClick={onUpdate}
-          >
-            <Pencil size={16} />
-            Update
-          </Button>
+          <Dialog open={updateOpen} onOpenChange={setUpdateOpen}>
+            <DialogTrigger asChild>
+              <Button
+                size="sm"
+                variant="secondary"
+                className="flex-1 gap-2"
+              >
+                <Pencil size={16} />
+                Update
+              </Button>
+            </DialogTrigger>
 
-          <Button
-            size="sm"
-            variant="destructive"
-            className="flex-1 gap-2"
-            onClick={onDelete}
-          >
-            <Trash2 size={16} />
-            Delete
-          </Button>
+            <UpdateClass classId={classId} setOpen={setUpdateOpen} />
+          </Dialog>
+
+          <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+            <DialogTrigger asChild>
+              <Button
+                size="sm"
+                variant="destructive"
+                className="flex-1 gap-2"
+              >
+                <Trash2 size={16} />
+                Delete
+              </Button>
+            </DialogTrigger>
+
+            <DeleteClassDialog
+              className={className}
+              setOpen={setDeleteOpen}
+              isLoading={isPending}
+              onConfirm={async () => {
+                await handleDeleteClass(classId);
+                setDeleteOpen(false);
+              }}
+            />
+          </Dialog>
 
         </div>
 

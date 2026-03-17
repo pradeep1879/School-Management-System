@@ -1,5 +1,5 @@
 import { client } from "../../prisma/db.js";
-
+import { publish } from '../../services/events/eventBus.js'
 
 export const createExam = async (body, userId, role) => {
   const {
@@ -87,6 +87,12 @@ export const createExam = async (body, userId, role) => {
         teacherId: userId,
       },
     });
+
+    publish("exam_created", {
+      classId,
+      examId: exam.id,
+      title: exam.title
+    })
 
     const examSubjects = await Promise.all(
       subjects.map((subject) =>
@@ -395,14 +401,15 @@ export const bulkUpdateMarks = async (
 
   for (const result of results) {
     const exam = result.examSubject.exam;
-
+    
+    if (role === "teacher" && exam.teacherId !== userId) {
+      throw new Error("Unauthorized");
+    }
+    
     if (exam.status === "PUBLISHED") {
       throw new Error("Cannot edit published exam");
     }
 
-    if (role === "teacher" && exam.teacherId !== userId) {
-      throw new Error("Unauthorized");
-    }
 
     const update = updates.find(
       (u) => u.resultId === result.id

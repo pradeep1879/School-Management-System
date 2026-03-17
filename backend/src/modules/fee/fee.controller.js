@@ -3,7 +3,7 @@ import * as feeService from "./fee.service.js";
 
 export const createFeeStructure = async (req, res, next) => {
   try {
-    const data = await feeService.createFeeStructure(req.body);
+    const data = await feeService.createFeeStructure(req.body, req.role);
     res.status(201).json(data);
   } catch (error) {
     next(error);

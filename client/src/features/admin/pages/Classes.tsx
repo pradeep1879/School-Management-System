@@ -63,6 +63,7 @@ const Classes = () => {
         {data?.classes?.map((cls: any) => (
           <ClassCard
             key={cls.id}
+            classId={cls.id}
             className={`Class ${cls.slug}`}
             section={cls.section}
             classTeacher={cls.teacher?.teacherName || "Not Assigned"}

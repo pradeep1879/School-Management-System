@@ -295,27 +295,27 @@ model Attendance {
 }
 
 model Fee {
-  id          String      @id @default(uuid())
-  month       String
-  amount      String
-  remark      String
-  paidAt      DateTime?
-  studentId   String
-  student     Student     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  id                String      @id @default(uuid())
+  month             String
+  amount            String
+  remark            String
+  paidAt            DateTime?
+  studentId         String
+  student           Student     @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
 }
 
 model FeeStructure {
-  id            String   @id @default(uuid())
-  classId       String
-  session       String   // e.g. "2025-26"
-  lateFeeType   LateFeeType   @default(NONE)
-  lateFeeAmount Float
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id                String   @id @default(uuid())     
+  classId           String
+  session           String   // e.g. "2025-26"
+  lateFeeType       LateFeeType   @default(NONE)
+  lateFeeAmount     Float
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
-  class         Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
-  components    FeeComponent[]
+  class             Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
+  components        FeeComponent[]
 
   @@unique([classId, session])
   @@index([classId])
@@ -324,14 +324,14 @@ model FeeStructure {
 
 
 model FeeComponent {
-  id             String   @id @default(uuid())
-  feeStructureId String
-  name           String   // Tuition, Transport, Exam
-  amount         Float
-  frequency      FeeFrequency
-  isOptional     Boolean  @default(false)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id                String   @id @default(uuid())
+  feeStructureId    String
+  name              String   // Tuition, Transport, Exam
+  amount            Float
+  frequency         FeeFrequency
+  isOptional        Boolean  @default(false)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
   feeStructure   FeeStructure @relation(fields: [feeStructureId], references: [id], onDelete: Cascade)
   installments   StudentFeeInstallment[]
@@ -503,6 +503,20 @@ model TeacherAttendance {
   @@index([approvalStatus])
 }
 
+
+model Notification {
+  id        String   @id @default(uuid())
+  title     String
+  message   String
+  type      String
+  userId    String?
+  classId   String?
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+
+
 enum TeacherAttendanceStatus {
   PRESENT
   ABSENT
@@ -546,7 +560,6 @@ enum PaymentMethod {
   CARD
   BANK_TRANSFER
 }
-
 
 
 

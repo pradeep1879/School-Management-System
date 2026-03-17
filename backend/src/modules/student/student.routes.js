@@ -7,6 +7,7 @@ const router = express.Router();
 router.post("/", verifyUser(["admin"]), studentController.createStudent);
 
 router.post("/login", studentController.loginStudent);
+router.post("/logout", verifyUser(["student"]), studentController.logout);
 
 router.get("/", verifyUser(["admin"]), studentController.getAllStudents);
 

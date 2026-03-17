@@ -3,8 +3,8 @@ import { client } from "../../prisma/db.js";
 
 export const getFinanceDashboard = async () => {
 
-  /* ================= OVERVIEW ================= */
-
+  
+  // overview
   const totalInstallments = await client.studentFeeInstallment.aggregate({
     _sum: { totalAmount: true },
   });
@@ -32,8 +32,8 @@ export const getFinanceDashboard = async () => {
     todayCollection: todayPayments._sum.amountPaid || 0
   };
 
-  /* ================= CLASS WISE COLLECTION ================= */
-
+  
+  // class wise collection
   const classes = await client.class.findMany({
     include: {
       students: {
@@ -65,8 +65,8 @@ export const getFinanceDashboard = async () => {
 
   });
 
-  /* ================= MONTHLY COLLECTION ================= */
-
+  
+  // monthly collection
   const payments = await client.payment.findMany({
     select: {
       amountPaid: true,
@@ -91,8 +91,8 @@ export const getFinanceDashboard = async () => {
     amount
   }));
 
-  /* ================= PAYMENT METHOD ================= */
-
+  
+  // payment method
   const methods = await client.payment.groupBy({
     by:["paymentMethod"],
     _sum:{
@@ -105,8 +105,8 @@ export const getFinanceDashboard = async () => {
     amount: m._sum.amountPaid
   }));
 
-  /* ================= RECENT PAYMENTS ================= */
-
+  
+  // recent payments
   const recent = await client.payment.findMany({
     take:5,
     orderBy:{ createdAt:"desc" },

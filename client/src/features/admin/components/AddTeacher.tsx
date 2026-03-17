@@ -29,8 +29,7 @@ interface TeacherFormData {
 }
 
 const AddTeacher = ({ setOpen }: AddTeacherProps) => {
-  const { register, handleSubmit, reset, watch } =
-    useForm<TeacherFormData>()
+  const { register, handleSubmit, reset, watch } = useForm<TeacherFormData>()
 
   const { mutate, isPending } = useCreateTeacher()
   const [showPassword, setShowPassword] = useState(false)
@@ -66,7 +65,7 @@ const AddTeacher = ({ setOpen }: AddTeacherProps) => {
   }
 
   return (
-    <DialogContent className="max-h-[90vh] overflow-y-auto custom-scrollbar sm:max-w-130">
+    <DialogContent className="max-h-[60vh] overflow-y-auto custom-scrollbar sm:max-w-130">
 
       <DialogHeader>
         <DialogTitle className="text-lg font-semibold">

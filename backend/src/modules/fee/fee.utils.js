@@ -8,11 +8,7 @@ export const calculateLateFee = (
   const today = new Date();
   if (today <= installment.dueDate) return 0;
 
-  const daysLate =
-    Math.floor(
-      (today - installment.dueDate) /
-        (1000 * 60 * 60 * 24)
-    );
+  const daysLate =  Math.floor((today - installment.dueDate) / (1000 * 60 * 60 * 24));
 
   if (structure.lateFeeType === "FIXED")
     return structure.lateFeeAmount;

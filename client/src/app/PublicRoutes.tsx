@@ -1,11 +1,10 @@
 import { useAuthStore } from "@/store/auth.store"
+import type React from "react"
 import { Navigate, useLocation } from "react-router-dom"
 
-interface Props {
-  children: React.ReactNode
-}
 
-const PublicRoute = ({ children }: Props) => {
+
+const PublicRoute = ({ children }: { children: React.ReactNode}) => {
 
   const { token, role, hasHydrated } = useAuthStore()
   const location = useLocation()

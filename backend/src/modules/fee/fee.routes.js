@@ -5,8 +5,7 @@ import { verifyUser } from "../../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
-/* ================= ADMIN ================= */
-
+// this is only for admin
 router.post(
   "/structure",
   verifyUser(["admin"]),
@@ -37,7 +36,7 @@ router.get(
   feeController.getAdminFinanceSummary
 );
 
-/* 🔥 NEW DASHBOARD ANALYTICS ROUTE */
+// dashboar analytics route
 
 router.get(
   "/dashboard",
@@ -58,7 +57,7 @@ router.get(
 );
 
 
-/* ================= STUDENT ================= */
+// this route is for student.         
 
 router.get(
   "/my",
