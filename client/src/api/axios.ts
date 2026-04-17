@@ -5,6 +5,20 @@ const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
 });
 
+const getLoginRouteByRole = (
+  role: ReturnType<typeof useAuthStore.getState>["role"],
+) => {
+  if (role === "teacher") {
+    return "/teacher/login";
+  }
+
+  if (role === "student") {
+    return "/student/login";
+  }
+
+  return "/";
+};
+
 // Attach token automatically
 api.interceptors.request.use(
   (config) => {
@@ -17,6 +31,31 @@ api.interceptors.request.use(
     return config;
   },
   (error) => Promise.reject(error)
+);
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const status = error?.response?.status;
+    const requestUrl = String(error?.config?.url ?? "");
+    const isLoginRequest = requestUrl.includes("/login");
+
+    if (status === 401 && !isLoginRequest) {
+      const { token, role, logout } = useAuthStore.getState();
+
+      if (token) {
+        logout();
+
+        const loginRoute = getLoginRouteByRole(role);
+
+        if (window.location.pathname !== loginRoute) {
+          window.location.replace(loginRoute);
+        }
+      }
+    }
+
+    return Promise.reject(error);
+  },
 );
 
 export default api;

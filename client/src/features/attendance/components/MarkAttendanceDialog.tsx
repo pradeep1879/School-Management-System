@@ -345,7 +345,7 @@ export default function MarkAttendanceDialog({
         </div>
 
         {/* STUDENT LIST */}
-        <div className="flex-1 overflow-y-auto mt-5 space-y-3 pr-2">
+        <div className="custom-scrollbar mt-5 flex-1 space-y-3 overflow-y-auto pr-2">
 
           {isLoading ? (
             <>

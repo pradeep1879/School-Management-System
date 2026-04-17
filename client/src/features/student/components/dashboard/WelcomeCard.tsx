@@ -1,5 +1,8 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
+import { Sparkles } from "lucide-react"
+import { Link } from "react-router-dom"
 
 interface Props {
   student: any
@@ -30,6 +33,17 @@ const WelcomeCard = ({ student }: Props) => {
             Roll No: {student?.rollNumber}
           </p>
         </div>
+
+        <Button
+          asChild
+          variant="secondary"
+          className="ml-auto shrink-0 gap-2 text-slate-900"
+        >
+          <Link to="/student/ai-quiz">
+            <Sparkles className="h-4 w-4" />
+            Take AI Quiz
+          </Link>
+        </Button>
       </CardContent>
     </Card>
   )

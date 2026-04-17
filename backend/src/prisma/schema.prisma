@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
   provider = "prisma-client-js"
@@ -82,6 +77,8 @@ model Class {
   exams             Exam[]        //  REQUIRED OPPOSITE RELATION
   attendanceSession AttendanceSession[]
   feeStructures     FeeStructure[]
+  announcements     Announcement[]
+  aiQuizzes         AIQuiz[]
 }
 
 
@@ -116,6 +113,8 @@ model Student {
   attendance          Attendance[]
   examResults         ExamResult[]     //  REQUIRED OPPOSITE RELATION
   feeInstallments     StudentFeeInstallment[]
+  aiQuizzes           AIQuiz[]
+  aiQuizAttempts      AIQuizAttempt[]
 }
 
 
@@ -513,6 +512,122 @@ model Notification {
   classId   String?
   isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
+}
+
+model Announcement {
+  id          String             @id @default(uuid())
+  title       String
+  message     String
+  senderId    String
+  senderRole  Role
+  targetType  TargetType
+  classId     String?
+  createdAt   DateTime           @default(now())
+
+  class       Class?             @relation(fields: [classId], references: [id], onDelete: Cascade)
+  reads       AnnouncementRead[]
+
+  @@index([targetType])
+  @@index([classId])
+  @@index([senderId])
+  @@index([createdAt])
+}
+
+model AnnouncementRead {
+  id             String       @id @default(uuid())
+  announcementId String
+  userId         String
+  readAt         DateTime     @default(now())
+
+  announcement   Announcement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
+
+  @@unique([announcementId, userId])
+  @@index([userId])
+}
+
+model AIQuiz {
+  id              String           @id @default(uuid())
+  studentId       String
+  classId         String
+  subject         String
+  topic           String?
+  difficulty      AIQuizDifficulty
+  totalQuestions  Int
+  createdAt       DateTime         @default(now())
+
+  student         Student          @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  class           Class            @relation(fields: [classId], references: [id], onDelete: Cascade)
+  questions       AIQuizQuestion[]
+  attempts        AIQuizAttempt[]
+
+  @@index([studentId, createdAt])
+  @@index([classId, subject])
+}
+
+model AIQuizQuestion {
+  id             String           @id @default(uuid())
+  quizId         String
+  question       String
+  options        Json
+  correctAnswer  String
+  explanation    String
+  difficulty     AIQuizDifficulty
+  topic          String?
+
+  quiz           AIQuiz           @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  answers        AIQuizAnswer[]
+
+  @@index([quizId])
+}
+
+model AIQuizAttempt {
+  id            String         @id @default(uuid())
+  quizId        String
+  studentId     String
+  score         Int            @default(0)
+  total         Int
+  percentage    Float          @default(0)
+  startedAt     DateTime       @default(now())
+  submittedAt   DateTime?
+
+  quiz          AIQuiz         @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  student       Student        @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  answers       AIQuizAnswer[]
+
+  @@unique([quizId, studentId])
+  @@index([studentId, startedAt])
+}
+
+model AIQuizAnswer {
+  id              String         @id @default(uuid())
+  attemptId       String
+  questionId      String
+  selectedAnswer  String
+  isCorrect       Boolean
+
+  attempt         AIQuizAttempt  @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  question        AIQuizQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([attemptId, questionId])
+  @@index([questionId])
+}
+
+enum Role {
+  admin
+  teacher
+  student
+}
+
+enum TargetType {
+  SCHOOL
+  CLASS
+  TEACHERS
+}
+
+enum AIQuizDifficulty {
+  EASY
+  MEDIUM
+  HARD
 }
 
 

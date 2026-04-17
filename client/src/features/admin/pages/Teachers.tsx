@@ -11,7 +11,7 @@ import TeacherAttendanceHistoryStatsTable from "@/features/teacherAttendance/com
 
 const tabs = [
   { id: "all-teachers", label: "All Teachers" },
-  { id: "attendance", label: "Attendance" },
+  { id: "attendance", label: "Attendance Queue" },
   { id: "attendance-history", label: "Attendance History" },
 ];
 

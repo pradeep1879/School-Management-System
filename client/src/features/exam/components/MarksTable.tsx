@@ -33,7 +33,7 @@ const MarksTable = ({
 
   return (
     <div className="space-y-6">
-      <div className="overflow-auto border rounded-xl">
+      <div className="custom-scrollbar overflow-auto rounded-xl border">
         <table className="w-full text-sm">
           <thead className="bg-muted">
             <tr>

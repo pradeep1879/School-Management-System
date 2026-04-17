@@ -56,7 +56,7 @@ const StudentsPage = () => {
         </CardHeader>
 
         <CardContent>
-          <div className="overflow-x-auto">
+          <div className="custom-scrollbar overflow-x-auto">
             <table className="w-full text-sm">
               <thead className="border-b">
                 <tr>

@@ -42,7 +42,7 @@ export default function StudentAttendanceCard({
     <div className="space-y-6">
       {/* SUMMARY */}
       <Card>
-        <CardContent className="p-6 space-y-4">
+        <CardContent className="space-y-4">
           <h2 className="text-lg font-semibold">
             Attendance Summary
           </h2>
@@ -83,7 +83,7 @@ export default function StudentAttendanceCard({
             Attendance History
           </h2>
 
-          <div className="space-y-2 max-h-80 overflow-y-auto">
+          <div className="custom-scrollbar max-h-80 space-y-2 overflow-y-auto">
             {history.map((record) => (
               <div
                 key={record.id}

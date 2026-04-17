@@ -6,10 +6,13 @@ import { connectSocket } from "../services/socket";
 
 export const useNotifications = () =>{
   const { addNotification } = useNotificationContext();
+  const token = useAuthStore((state) => state.token);
 
   useEffect(() =>{
-    const { token } = useAuthStore()
-    console.log("student token", token)
+    if (!token) {
+      return;
+    }
+
     const socket = connectSocket(token);
 
     socket.onopen = () =>{
@@ -27,5 +30,5 @@ export const useNotifications = () =>{
     }
 
     return () => socket.close();
-  }, []);
+  }, [addNotification, token]);
 }

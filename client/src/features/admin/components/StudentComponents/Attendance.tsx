@@ -56,7 +56,7 @@ export default function StudentAttendanceTable() {
         <CardTitle>Monthly Attendance</CardTitle>
       </CardHeader>
 
-      <CardContent className="overflow-x-auto">
+      <CardContent className="custom-scrollbar overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>

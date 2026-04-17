@@ -64,6 +64,10 @@ import NotFound from '@/components/extra-components/PageNotFound';
 import StudentNotificationPage from '@/features/notification/pages/NotificationPage';
 import TeacherProfileSetting from '@/features/teacher/pages/auth/TeacherProfileSetting';
 import AdminProfileSetting from '@/features/admin/pages/auth/AdminProfileSetting';
+import AnnouncementsPage from '@/features/announcements/pages/AnnouncementsPage';
+import AIQuizDashboardPage from '@/features/student/ai-quiz/pages/AIQuizDashboardPage';
+import AIQuizAttemptPage from '@/features/student/ai-quiz/pages/AIQuizAttemptPage';
+import AIQuizResultPage from '@/features/student/ai-quiz/pages/AIQuizResultPage';
 
 
 
@@ -76,6 +80,7 @@ const AppRoutes = () =>{
       {/* Admin */}
         <Route path="*" element={<NotFound />} />
         <Route path="/" element={<PublicRoute><AdminLogin/></PublicRoute>}/>
+        <Route path="/admin/login" element={<PublicRoute><AdminLogin/></PublicRoute>}/>
         <Route path="/teacher/login" element={<PublicRoute><TeacherLogin/></PublicRoute>}/>
         <Route path="/student/login" element={<PublicRoute><StudentLogin/></PublicRoute>}/>
 
@@ -91,6 +96,7 @@ const AppRoutes = () =>{
         <Route path="classes" element={<Classes />} />
         <Route path="class-detail/:classId" element={<ClassDetail />} />
         <Route path="students" element={<StudentsPage />} />
+        <Route path="announcements" element={<AnnouncementsPage />} />
         <Route path="student-profile/:studentId" element={<StudentProfilePageAdminTeacher />} />
         <Route path="time-table" element={<SchoolDailySchedulePage />} />
         <Route path="exam/:examId/results" element={<AdminStudentResultsPage />} />
@@ -138,6 +144,7 @@ const AppRoutes = () =>{
         <Route path="exam/:examId" element={<ExamDetailPage />} />
         <Route path="exam/:examId/marks" element={<ExamMarksPage />} />
         <Route path="class/homework" element={<HomeworkPage />} />
+        <Route path="announcements" element={<AnnouncementsPage />} />
         <Route path="exam/:examId/result/:studentId" element={<StudentResultPage />} />
         <Route path="student-profile/:studentId" element={<StudentProfilePageAdminTeacher />} />
         <Route path="exam/:examId/results" element={<TeacherStudentResultsPage />} />
@@ -163,7 +170,11 @@ const AppRoutes = () =>{
            <Route path="attendance" element={ <StudentAttendancePage />}/>
            <Route path="subjects" element={<StudentSubjectsPage />}/>
            <Route path="exams" element={<StudentExamListPage />} />
+           <Route path="ai-quiz" element={<AIQuizDashboardPage />} />
+           <Route path="ai-quiz/attempt/:quizId" element={<AIQuizAttemptPage />} />
+           <Route path="ai-quiz/result/:quizId" element={<AIQuizResultPage />} />
            <Route path="homework" element={<HomeworkPage />} />
+           <Route path="announcements" element={<AnnouncementsPage />}/>
            <Route path="exam/:examId" element={<StudentResultPage />} />
            <Route  path="subjects/:subjectId/syllabus"  element={<SyllabusPage />}/>
            <Route  path="fee"  element={<MyFeePage />}/>

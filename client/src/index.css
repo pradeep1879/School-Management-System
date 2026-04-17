@@ -4,22 +4,32 @@
 
 @custom-variant dark (&:is(.dark *));
 
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--muted-foreground) / 0.35) hsl(var(--background));
+}
+
 .custom-scrollbar::-webkit-scrollbar {
-  height: 6px; /* horizontal scrollbar */
-  width: 6px;  /* vertical scrollbar */
+  height: 10px;
+  width: 10px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: transparent;
+  background: hsl(var(--background));
   border-radius: 9999px;
 }
 
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted) / 0.9);
+  border-radius: 9999px;
+  border: 2px solid hsl(var(--background));
+  background-clip: padding-box;
+}
+
 .custom-scrollbar:hover::-webkit-scrollbar-thumb {
-  background: hsl(var(--muted-foreground) / 0.4);
+  background: hsl(var(--muted-foreground) / 0.45);
+  border: 2px solid hsl(var(--background));
+  background-clip: padding-box;
 }
 
 .custom-div-scroll {
@@ -28,6 +38,28 @@
 }
 
 .custom-div-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.sidebar-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.sidebar-scrollbar::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+.command-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.command-scrollbar::-webkit-scrollbar {
+  width: 0;
+  height: 0;
   display: none;
 }
 
@@ -146,6 +178,27 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+  }
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--muted-foreground) / 0.35) hsl(var(--background));
+  }
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  *::-webkit-scrollbar-track {
+    background: hsl(var(--background));
+    border-radius: 9999px;
+  }
+  *::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted) / 0.9);
+    border-radius: 9999px;
+    border: 2px solid hsl(var(--background));
+    background-clip: padding-box;
+  }
+  *::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.45);
   }
   body {
     @apply bg-background text-foreground;

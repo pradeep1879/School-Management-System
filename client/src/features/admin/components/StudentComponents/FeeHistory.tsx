@@ -73,7 +73,7 @@ export default function StudentFeeTable() {
         <CardTitle>Fee Payment History</CardTitle>
       </CardHeader>
 
-      <CardContent className="overflow-x-auto">
+      <CardContent className="custom-scrollbar overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>

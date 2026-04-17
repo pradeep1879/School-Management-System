@@ -2,14 +2,15 @@
   "name": "school-management-backend",
   "version": "1.0.0",
   "type": "module",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js",
-    "postinstall": "prisma generate --schema=./src/prisma/schema.prisma",
-    "prisma:generate": "prisma generate --schema=./src/prisma/schema.prisma",
-    "prisma:migrate": "prisma migrate deploy --schema=./src/prisma/schema.prisma",
-    "prisma:studio": "prisma studio --schema=./src/prisma/schema.prisma"
+    "start": "bun run index.ts",
+    "dev": "bun --watch index.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "postinstall": "bunx prisma generate --schema=./src/prisma/schema.prisma",
+    "prisma:generate": "bunx prisma generate --schema=./src/prisma/schema.prisma",
+    "prisma:migrate": "bunx prisma migrate deploy --schema=./src/prisma/schema.prisma",
+    "prisma:studio": "bunx prisma studio --schema=./src/prisma/schema.prisma"
   },
   "dependencies": {
     "@prisma/client": "^6.18.0",
@@ -17,15 +18,23 @@
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dayjs": "^1.11.19",
+    "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "express-fileupload": "^1.5.2",
     "imagekit": "^6.0.0",
     "jsonwebtoken": "^9.0.2",
     "node-cron": "^4.2.1",
-    "ws": "^8.19.0"
+    "ws": "^8.19.0",
+    "zod": "^4.1.12"
   },
   "devDependencies": {
-    "nodemon": "^3.1.11",
-    "prisma": "^6.18.0"
+    "@types/cookie-parser": "^1.4.9",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/express-fileupload": "^1.5.1",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/ws": "^8.18.1",
+    "prisma": "^6.18.0",
+    "typescript": "^5.9.3"
   }
 }

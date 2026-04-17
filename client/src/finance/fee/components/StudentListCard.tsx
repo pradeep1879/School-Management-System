@@ -21,7 +21,7 @@ const StudentListCard = ({
   onSelect,
 }: Props) => {
   return (
-    <Card className="xl:col-span-1 h-162.5 custom-scrollbar overflow-y-auto">
+    <Card className="custom-scrollbar h-162.5 overflow-y-auto xl:col-span-1">
       <CardHeader>
         <CardTitle>Students</CardTitle>
       </CardHeader>
